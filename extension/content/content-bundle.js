@@ -3258,6 +3258,7 @@ async function triggerAiAnalysis(text, context, rect) {
  * @param {Object} rect - 位置矩形
  */
 async function updatePopupWithAiResult(text, aiData, rect) {
+  if (clickTooltip?._vocabularyExpanded) return;
   // 检查弹窗是否存在且显示的是同一个词
   if (!clickTooltip || !clickTooltip.querySelector('.tooltip-word') || 
       clickTooltip.querySelector('.tooltip-word').textContent !== text) {
@@ -4678,7 +4679,8 @@ async function renderPopup({
   isStarred = false,
   showRemoveBtn = false,
   mode = 'simple', // 'simple' 或 'full'
-  posAnalysis = null // 新增：POS分析结果
+  posAnalysis = null, // 新增：POS分析结果
+  context = ''
 }) {
   const perfId = safePerformanceMonitor.start('renderPopup');
   
@@ -4768,8 +4770,15 @@ async function renderPopup({
   // 底部按钮区域
   let bottomActionsHtml = '';
   
-  // 简略模式下，如果有详细释义，显示"详细注解"按钮
-  if (mode === 'simple' && meanings && meanings.length > 0) {
+  // Always offer on-demand details for words and short expressions, including phrases without dictionary data.
+  if (count > 0 && window.TranslationVocabulary?.isCandidate(text)) {
+    bottomActionsHtml += `
+      <div class="tooltip-actions">
+        <button type="button" class="tooltip-detail-btn tooltip-vocabulary-btn" aria-expanded="false">展开详解</button>
+      </div>
+      <div class="tooltip-vocabulary-panel" hidden></div>
+    `;
+  } else if (mode === 'simple' && meanings && meanings.length > 0) {
     bottomActionsHtml += `
       <div class="tooltip-actions">
         <button class="tooltip-detail-btn">
@@ -4817,21 +4826,23 @@ async function renderPopup({
   // 绑定事件（传递当前所有参数以便重新渲染）
   const currentParams = { 
     text, translation, rect, count, phonetic, partOfSpeech, 
-    meanings, wordType, isStarred, showRemoveBtn, mode, posAnalysis 
+    meanings, wordType, isStarred, showRemoveBtn, mode, posAnalysis, context
   };
   bindPopupEvents(clickTooltip, currentParams);
+  const vocabularyPopup = clickTooltip;
+  window.TranslationVocabulary?.bind(vocabularyPopup, currentParams,
+    () => calculatePopupPosition(vocabularyPopup, rect));
   
-  // 点击外部关闭
+  // 点击外部关闭 - 使用安全的事件管理器防止内存泄漏
   setTimeout(() => {
-    const closeOnClickOutside = (e) => {
+    const closeListenerId = EventListenerManager.add(document, 'click', (e) => {
       if (clickTooltip && !clickTooltip.contains(e.target)) {
         clickTooltip.remove();
         clickTooltip = null;
         translationPopup = null;
-        document.removeEventListener('click', closeOnClickOutside);
+        EventListenerManager.remove(closeListenerId);
       }
-    };
-    document.addEventListener('click', closeOnClickOutside);
+    });
   }, 100);
   
   // 结束性能监控
@@ -4858,7 +4869,7 @@ function calculatePopupPosition(popup, targetRect) {
   
   // 2. 垂直定位（默认下方）
   // 增加 10px 间距
-  let top = targetRect.bottom + 10;
+  let top = (targetRect.bottom ?? targetRect.top + (targetRect.height || 0)) + 10;
   
   // 3. 水平边界调整
   // 左侧边界
@@ -4888,6 +4899,7 @@ function calculatePopupPosition(popup, targetRect) {
   }
   
   // 5. 应用位置（使用 fixed 定位，无需考虑 scrollY）
+  top = Math.max(10, Math.min(top, viewportHeight - popupRect.height - 10));
   popup.style.position = 'fixed';
   popup.style.left = `${left}px`;
   popup.style.top = `${top}px`;
@@ -4919,7 +4931,7 @@ function bindPopupEvents(popup, params) {
   }
   
   // 详细注解按钮
-  const detailBtn = popup.querySelector('.tooltip-detail-btn');
+  const detailBtn = popup.querySelector('.tooltip-detail-btn:not(.tooltip-vocabulary-btn)');
   if (detailBtn) {
     detailBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -5037,11 +5049,12 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
     isStarred,
     showRemoveBtn: true, // 点击高亮时总是显示移除按钮
     mode: mode,
-    posAnalysis: posAnalysis // 传递POS分析结果
+    posAnalysis: posAnalysis, // 传递POS分析结果
+    context
   });
   
   // 触发 AI 辅助分析（使用元素上下文，500ms 防抖 + 700ms 响应窗口）
-  triggerAiAnalysis(word, context, rect);
+  // Rich AI analysis is requested only when the user expands details.
   
   // 异步获取完整信息（音标、释义）并更新
   // 如果初始调用时没有音标、释义，或者释义为空，尝试获取
@@ -5054,7 +5067,7 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
     // 如果有新数据，重新渲染
     if (nextMeanings.length > 0 || nextPhonetic !== phonetic || nextPartOfSpeech !== partOfSpeech) {
       // 检查弹窗是否还存在（可能被用户关闭了）
-      if (clickTooltip && clickTooltip.querySelector('.tooltip-word').textContent === word) {
+      if (clickTooltip && !clickTooltip._vocabularyExpanded && clickTooltip.querySelector('.tooltip-word').textContent === word) {
         await renderPopup({
           text: word,
           translation,
@@ -5067,7 +5080,8 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
           isStarred,
           showRemoveBtn: true,
           mode: mode,
-          posAnalysis: posAnalysis
+          posAnalysis: posAnalysis,
+          context
         });
       }
     }
@@ -5263,7 +5277,7 @@ async function applyPOSColor(element, word, sentence, posAnalysis = null) {
 }
 
 // 显示翻译弹窗（使用与点击高亮单词相同的样式）
-async function showTranslationPopup(text, translation, rect, count = 1) {
+async function showTranslationPopup(text, translation, rect, count = 1, context = '') {
   const isWordPhrase = isWordOrPhrase(text);
   const wordLower = text.toLowerCase().trim();
   
@@ -5296,11 +5310,12 @@ async function showTranslationPopup(text, translation, rect, count = 1) {
     meanings,
     wordType: type,
     isStarred,
-    showRemoveBtn: isWordPhrase // 只有单词/词组显示移除按钮
+    showRemoveBtn: isWordPhrase, // 只有单词/词组显示移除按钮
+    context
   });
   
   // 触发AI分析（延迟执行）
-  if (isWordPhrase) triggerAiAnalysis(text, text, rect);
+  // Details are fetched on demand by the expand button.
 }
 
 
@@ -5391,7 +5406,8 @@ async function executeTranslation(requestedText = '') {
   
   try {
     // 自动选择方向：中文译成英文，其他语言译成简体中文。
-    const translationResult = await translateText(text, range ? getContextFromRange(range) : '', false);
+    const context = range ? getContextFromRange(range) : '';
+    const translationResult = await translateText(text, context, false);
     const translation = translationResult.translation || '翻译失败';
     const resultPartOfSpeech = translationResult.partOfSpeech;
     
@@ -5427,7 +5443,7 @@ async function executeTranslation(requestedText = '') {
     hideLoadingIndicator();
     
     // 显示翻译弹窗（包含音标、词性和次数）
-    await showTranslationPopup(text, translation, rect, count);
+    await showTranslationPopup(text, translation, rect, count, context);
   } catch (error) {
     console.error('执行翻译失败:', error);
     hideLoadingIndicator();

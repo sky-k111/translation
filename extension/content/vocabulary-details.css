@@ -1,0 +1,34 @@
+.click-tooltip.vocabulary-expanded {
+  box-sizing: border-box;
+  width: 430px;
+  max-width: min(430px, calc(100vw - 56px));
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  animation: none;
+}
+.click-tooltip .tooltip-vocabulary-panel[hidden] { display: none; }
+.click-tooltip .tooltip-vocabulary-panel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.3);
+  font-size: 14px;
+  line-height: 1.65;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.click-tooltip .tooltip-vocabulary-panel p { margin: 4px 0; }
+.click-tooltip .vocabulary-source { font-size: 11px; opacity: .8; }
+.click-tooltip .vocabulary-context,
+.click-tooltip .vocabulary-note { padding: 10px; background: rgba(0,0,0,.12); border-radius: 8px; }
+.click-tooltip .vocabulary-pos { font-size: 15px; margin: 14px 0 8px; color: inherit; }
+.click-tooltip .vocabulary-senses { padding-left: 22px; margin: 0; }
+.click-tooltip .vocabulary-sense { margin: 0 0 14px; padding-left: 3px; }
+.click-tooltip .vocabulary-meaning,
+.click-tooltip .vocabulary-phrase-name { font-weight: 650; }
+.click-tooltip .vocabulary-usage,
+.click-tooltip .vocabulary-example-translation { font-size: 12px; opacity: .9; }
+.click-tooltip .vocabulary-example { padding-left: 10px; border-left: 2px solid rgba(255,255,255,.5); }
+.click-tooltip .vocabulary-phrase { margin: 10px 0; padding: 10px; background: rgba(255,255,255,.1); border-radius: 8px; }
+.click-tooltip .vocabulary-error { margin: 8px 0 0; font-size: 12px; }
+.click-tooltip .tooltip-vocabulary-btn:disabled { cursor: wait; opacity: .7; }
+.click-tooltip .tooltip-vocabulary-btn:focus-visible { outline: 2px solid white; outline-offset: 3px; }

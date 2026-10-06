@@ -884,6 +884,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   // AI 分析请求
+  if (msg?.type === 'VOCABULARY_DETAILS' && typeof msg.text === 'string' && msg.text.trim()) {
+    self.detailedTranslate(msg.text.trim(), typeof msg.context === 'string' ? msg.context : '')
+      .then(result => sendResponse({ ok: true, result }))
+      .catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
   if (msg && msg.type === 'AI_ANALYZE' && msg.text) {
     self.aiAnalyze(msg.text, msg.context)
       .then(result => sendResponse({ ok: true, result }))
