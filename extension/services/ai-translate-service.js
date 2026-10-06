@@ -27,11 +27,13 @@ async function translateWithAI(text, context) {
     throw new Error('AI translation not configured');
   }
 
+  const includePronunciation = text.trim().length <= 80 && text.trim().split(/\s+/).length <= 6 &&
+    /^[a-zA-Z\s'’\-]+$/.test(text.trim());
   const systemPrompt = `你是一个专业的翻译引擎。自动识别原文的主要语言，并按以下规则选择翻译方向：
 原文主要是中文（包括简体、繁体以及夹杂英文术语的中文句子）时，翻译成英文。
 原文主要是英文、日文、韩文或其他非中文语言时，翻译成简体中文。
 要求：
-1. 仅返回翻译结果，不要包含任何解释、拼音或额外说明。
+1. ${includePronunciation ? '返回纯 JSON：{"translation":"准确中文译文","phonetic":"原文的国际音标 IPA，用 /.../ 包裹","partOfSpeech":"最符合语境的词性英文名称，如 noun、verb 或 phrasal verb"}。单词和词组都要给出原文的音标，不要把译文标音；不确定发音时 phonetic 留空，不要编造。不得在 JSON 外添加说明。' : '仅返回翻译结果，不要包含任何解释、拼音或额外说明。'}
 2. 准确理解上下文中的专业术语和俚语。
 3. 保持原文的语气和风格。
 4. 原文可能是英文、日文、韩文或其他语言，不要要求用户选择源语言。
@@ -57,6 +59,7 @@ async function translateWithAI(text, context) {
           { role: 'user', content: userContent }
         ],
         temperature: settings.temperature,
+        ...(includePronunciation ? { response_format: { type: 'json_object' } } : {}),
         ...(settings.provider === 'deepseek' ? { thinking: { type: 'disabled' } } : {})
       })
     });
@@ -67,7 +70,17 @@ async function translateWithAI(text, context) {
     }
 
     const data = await response.json();
-    const translation = data.choices[0]?.message?.content?.trim();
+    const content = data.choices[0]?.message?.content?.trim();
+    let translation = content;
+    let phonetic = '', partOfSpeech = '';
+    if (includePronunciation) {
+      let parsed;
+      try { parsed = JSON.parse(content); }
+      catch { throw new Error('翻译结果格式不正确，请重试'); }
+      translation = typeof parsed?.translation === 'string' ? parsed.translation.trim() : '';
+      phonetic = typeof parsed?.phonetic === 'string' ? parsed.phonetic.trim().slice(0, 200) : '';
+      partOfSpeech = typeof parsed?.partOfSpeech === 'string' ? parsed.partOfSpeech.trim().slice(0, 80) : '';
+    }
     
     if (!translation) {
       throw new Error('Empty response from AI');
@@ -75,6 +88,8 @@ async function translateWithAI(text, context) {
 
     return {
       translation,
+      phonetic,
+      partOfSpeech,
       aiProvider: settings.provider,
       model: settings.model
     };

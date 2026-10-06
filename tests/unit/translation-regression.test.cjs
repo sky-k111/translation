@@ -57,9 +57,10 @@ test('old original-text cache is ignored and unchanged English responses are rej
     return { ok: true, result: { translation: 'Hello' } };
   });
   cache.set('hello', { translation: 'Hello', timestamp: Date.now() });
+  cache.set('auto:zh-en:v2:Hello:', { translation: '你好', timestamp: Date.now() });
   await assert.rejects(vm.runInContext("translateText('Hello')", context), /未返回有效译文/);
   assert.equal(requests, 1);
-  assert.equal(cache.size, 1);
+  assert.equal(cache.size, 2);
 });
 
 test('Chinese translation uses a fresh direction cache and rejects unchanged Chinese', async () => {

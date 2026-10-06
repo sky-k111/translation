@@ -413,6 +413,8 @@ async function smartTranslate(text, context, skipAI = false, useParallel = true)
       
       return {
         translation: aiResult.translation,
+        phonetic: aiResult.phonetic || '',
+        partOfSpeech: aiResult.partOfSpeech || '',
         basic: null,
         source: 'ai',
         raw: aiResult
@@ -455,6 +457,8 @@ async function processTranslationResult(result, text, context) {
   // 增强返回数据：从 raw 中提取更多信息
   const processedResult = {
     translation: result.translation,
+    phonetic: result.phonetic || result.raw?.phonetic || '',
+    partOfSpeech: result.partOfSpeech || result.raw?.partOfSpeech || '',
     basic: result.basic || (result.raw ? result.raw.basic : null),
     source: result.source,
     raw: result.raw

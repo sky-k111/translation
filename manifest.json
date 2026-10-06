@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "单词翻译助手",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "高性能翻译助手 - 优化版",
   
   "minimum_chrome_version": "88",

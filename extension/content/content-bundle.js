@@ -1,5 +1,5 @@
 (() => {
-const scriptVersion = '2.1.7';
+const scriptVersion = '2.1.8';
 if (window.__TRANSLATION_ASSISTANT_READY?.version === scriptVersion &&
     window.__TRANSLATION_ASSISTANT_READY.extensionId === chrome.runtime.id) return;
 /**
@@ -4005,7 +4005,7 @@ function getContextFromRange(range) {
  */
 async function translateText(text, context = '', skipAI = false) {
   const perfId = safePerformanceMonitor.start('translateText');
-  const cacheKey = 'auto:zh-en:v2:' + text.trim() + ':' + context.trim();
+  const cacheKey = 'auto:zh-en:ipa:v3:' + text.trim() + ':' + context.trim();
   const cached = translationCache.get(cacheKey);
   if (cached && cached.translation && Date.now() - cached.timestamp < CACHE_CONFIG.DEFAULT_EXPIRY) {
     safePerformanceMonitor.end(perfId, 'translateText', { fromCache: true });
@@ -4768,7 +4768,10 @@ async function renderPopup({
   // 音标HTML
   let phoneticHtml = '';
   if (phonetic) {
-    phoneticHtml = `<div class="tooltip-phonetic">${phonetic}</div>`;
+    const phoneticElement = document.createElement('div');
+    phoneticElement.className = 'tooltip-phonetic';
+    phoneticElement.textContent = phonetic;
+    phoneticHtml = phoneticElement.outerHTML;
   }
   
   // POS分析信息HTML (新增)
@@ -5076,6 +5079,8 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
   // 获取完整的翻译信息，包括definitions和examples
   const context = getContextFromNode(element);
   const completeTranslation = await translateText(word, context, false);
+  const resolvedPhonetic = completeTranslation.phonetic || phonetic || words[wordLower]?.detailedInfo?.phonetic || '';
+  const resolvedPartOfSpeech = completeTranslation.partOfSpeech || partOfSpeech;
   
   // 获取POS分析（如果翻译结果中包含）
   let posAnalysis = completeTranslation.posAnalysis || null;
@@ -5086,8 +5091,8 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
     translation: completeTranslation.translation,
     rect,
     count,
-    phonetic: completeTranslation.phonetic || phonetic,
-    partOfSpeech: completeTranslation.partOfSpeech || partOfSpeech,
+    phonetic: resolvedPhonetic,
+    partOfSpeech: resolvedPartOfSpeech,
     meanings: completeTranslation.definitions || [],
     wordType,
     isStarred,
@@ -5104,12 +5109,12 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
   // 如果初始调用时没有音标、释义，或者释义为空，尝试获取
   if (!phonetic || !partOfSpeech || !completeTranslation.definitions || completeTranslation.definitions.length === 0) {
     const phoneticData = await getPhoneticAndPartOfSpeech(word);
-    const nextPhonetic = phonetic || phoneticData.phonetic;
+    const nextPhonetic = resolvedPhonetic || phoneticData.phonetic;
     const nextMeanings = phoneticData.meanings || [];
-    const nextPartOfSpeech = partOfSpeech || phoneticData.partOfSpeech;
+    const nextPartOfSpeech = resolvedPartOfSpeech || phoneticData.partOfSpeech;
     
     // 如果有新数据，重新渲染
-    if (nextMeanings.length > 0 || nextPhonetic !== phonetic || nextPartOfSpeech !== partOfSpeech) {
+    if (nextMeanings.length > 0 || nextPhonetic !== resolvedPhonetic || nextPartOfSpeech !== resolvedPartOfSpeech) {
       // 检查弹窗是否还存在（可能被用户关闭了）
       if (clickTooltip && !clickTooltip._vocabularyExpanded && clickTooltip.querySelector('.tooltip-word').textContent === word) {
         await renderPopup({
@@ -5170,6 +5175,9 @@ async function saveTranslation(word, translation, partOfSpeech = null, detailedI
     // 更新详细信息（如果有新的更详细的信息）
     if (detailedInfo && (!words[wordLower].detailedInfo || Object.keys(detailedInfo).length > Object.keys(words[wordLower].detailedInfo || {}).length)) {
       words[wordLower].detailedInfo = detailedInfo;
+    }
+    if (detailedInfo?.phonetic) {
+      words[wordLower].detailedInfo = { ...(words[wordLower].detailedInfo || {}), phonetic: detailedInfo.phonetic };
     }
     // 添加查询历史记录（保留最近30天的记录）
     if (!words[wordLower].lookupHistory) {
@@ -5321,19 +5329,19 @@ async function applyPOSColor(element, word, sentence, posAnalysis = null) {
 }
 
 // 显示翻译弹窗（使用与点击高亮单词相同的样式）
-async function showTranslationPopup(text, translation, rect, count = 1, context = '') {
+async function showTranslationPopup(text, translation, rect, count = 1, context = '', metadata = {}) {
   const isWordPhrase = isWordOrPhrase(text);
   const wordLower = text.toLowerCase().trim();
   
   // 获取音标和词性（如果还没有缓存）
-  let phonetic = null;
-  let partOfSpeech = null;
+  let phonetic = metadata.phonetic || '';
+  let partOfSpeech = metadata.partOfSpeech || null;
   let meanings = [];
   
-  if (isWordPhrase) {
+  if (isWordPhrase && (!phonetic || !partOfSpeech)) {
     const phoneticData = await getPhoneticAndPartOfSpeech(wordLower);
-    phonetic = phoneticData.phonetic;
-    partOfSpeech = phoneticData.partOfSpeech;
+    phonetic = phonetic || phoneticData.phonetic;
+    partOfSpeech = partOfSpeech || phoneticData.partOfSpeech;
     meanings = phoneticData.meanings;
   }
   
@@ -5487,7 +5495,7 @@ async function executeTranslation(requestedText = '') {
     hideLoadingIndicator();
     
     // 显示翻译弹窗（包含音标、词性和次数）
-    await showTranslationPopup(text, translation, rect, count, context);
+    await showTranslationPopup(text, translation, rect, count, context, detailedInfo);
   } catch (error) {
     console.error('执行翻译失败:', error);
     hideLoadingIndicator();

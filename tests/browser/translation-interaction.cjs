@@ -11,9 +11,10 @@ const root = path.resolve(__dirname, '../..') + path.sep;
     page.setDefaultTimeout(7000);
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await page.setContent('<html><body><h1>Full plugin integration</h1><p id="selection">Our API now includes paper search, better documentation</p></body></html>');
+    await page.setContent('<html><body><h1>Full plugin integration</h1><p id="selection">Our API now includes paper search, better documentation</p><p>The team will take on more staff.</p></body></html>');
     await page.evaluate(() => {
       window.handlers = [];
+      window.detailsRequests = 0;
       window.store = { translatedWords: {} };
       const get = (keys, callback) => {
         const data = Array.isArray(keys) ? Object.fromEntries(keys.map(key => [key, window.store[key]])) : window.store;
@@ -25,13 +26,17 @@ const root = path.resolve(__dirname, '../..') + path.sep;
           id: 'test-extension', getURL: path => 'https://example.test/' + path,
           onMessage: { addListener(handler) { window.handlers.push(handler); } },
           async sendMessage(message) {
-            if (message.type === 'SMART_TRANSLATE') return { ok: true, result: { translation: message.text === 'take on' ? '承担；雇用' : '我们的接口现已支持论文搜索，文档也更完善了。' } };
-            if (message.type === 'VOCABULARY_DETAILS') return { ok: true, result: {
+            if (message.type === 'SMART_TRANSLATE') return { ok: true, result: {
+              translation: message.text === 'take on' ? '承担；雇用' : '我们的接口现已支持论文搜索，文档也更完善了。',
+              phonetic: message.text === 'take on' ? '/teɪk ɒn/' : '',
+              partOfSpeech: message.text === 'take on' ? 'phrasal verb' : ''
+            } };
+            if (message.type === 'VOCABULARY_DETAILS') { window.detailsRequests++; return { ok: true, result: {
               kind: 'phrase', senses: [{ label: '短语动词', partOfSpeech: 'phrasal verb', definitions: [
                 { meaning: '承担', example: 'Take on a challenge.', exampleTranslation: '接受挑战。' },
                 { meaning: '雇用', example: 'Take on new staff.', exampleTranslation: '雇用新员工。' }
               ] }], relatedPhrases: [], notes: []
-            } };
+            } }; }
             return { ok: false, error: 'Test provider unavailable' };
           }
         },
@@ -95,6 +100,9 @@ const root = path.resolve(__dirname, '../..') + path.sep;
     assert.equal(injections, 1);
     assert.equal(await page.locator('.click-tooltip').count(), 1);
     await click({ menuItemId: 'translation-assistant-selection', selectionText: 'take on', frameId: 0 }, { id: 1 });
+    assert.equal(await page.locator('.tooltip-phonetic').textContent(), '/teɪk ɒn/');
+    assert.equal(await page.locator('.tooltip-vocabulary-panel').isVisible(), false);
+    assert.equal(await page.evaluate(() => window.detailsRequests), 0);
     const beforeHover = await page.locator('.click-tooltip').boundingBox();
     await page.locator('.click-tooltip').hover();
     await page.waitForTimeout(500);
@@ -105,7 +113,14 @@ const root = path.resolve(__dirname, '../..') + path.sep;
     assert.equal(await page.locator('.vocabulary-sense').count(), 2);
     assert.equal(await page.locator('.click-tooltip').count(), 1);
     assert.equal(errors.length, 0, errors.join('\n'));
+    await page.keyboard.press('Escape');
+    await page.locator('.translated-word-highlight[data-word="take on"]').click();
+    await page.waitForSelector('.tooltip-phonetic');
+    assert.equal(await page.locator('.tooltip-phonetic').textContent(), '/teɪk ɒn/');
+    await page.waitForTimeout(1800);
+    assert.equal(await page.locator('.tooltip-phonetic').textContent(), '/teɪk ɒn/');
     console.log('PASS: native menu recovers unloaded page, renders translation, tolerates reinjection, and works after selection disappears');
     console.log('PASS: recovered page also expands phrase details using the complete script bundle');
+    console.log('PASS: pronunciation is visible before expanding and survives highlighted-word popup updates');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
