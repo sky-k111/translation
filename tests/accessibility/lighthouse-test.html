@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Drawer Accessibility Test</title>
+    <meta name="description" content="Accessibility test page for WordDrawerV2 component">
+    
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="../../extension/components/styles/reset.css">
+    <link rel="stylesheet" href="../../extension/components/styles/variables.css">
+    <link rel="stylesheet" href="../../extension/components/styles/utils.css">
+    <link rel="stylesheet" href="../../extension/components/styles/animations.css">
+    
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="../../extension/components/complex/word-drawer-v2.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .test-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .description {
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .test-button {
+            padding: 0.75rem 1.5rem;
+            background: #5568d3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        
+        .test-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-button:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .test-info {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .test-info h2 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .test-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .test-info li {
+            color: #475569;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-info li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .keyboard-shortcuts {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+        
+        .keyboard-shortcuts h3 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .keyboard-shortcuts kbd {
+            background: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <main class="test-container">
+        <h1>Word Drawer Accessibility Test</h1>
+        
+        <p class="description">
+            This page tests the accessibility features of the WordDrawerV2 component. 
+            Click the button below to open the word drawer and test keyboard navigation, 
+            screen reader compatibility, and other accessibility features.
+        </p>
+        
+        <div class="test-info">
+            <h2>Accessibility Features Implemented</h2>
+            <ul>
+                <li>ARIA attributes (role="dialog", aria-modal, aria-labelledby)</li>
+                <li>Focus management with focus trap</li>
+                <li>Keyboard navigation (Escape, Arrow keys, Tab)</li>
+                <li>WCAG AA color contrast (≥ 4.5:1)</li>
+                <li>Touch targets ≥ 44x44px</li>
+                <li>Reduced motion support</li>
+                <li>Screen reader announcements</li>
+            </ul>
+        </div>
+        
+        <div class="keyboard-shortcuts">
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <p>
+                <kbd>Escape</kbd> Close drawer • 
+                <kbd>←</kbd> Previous word • 
+                <kbd>→</kbd> Next word • 
+                <kbd>Tab</kbd> Navigate elements • 
+                <kbd>Space</kbd>/<kbd>Enter</kbd> Activate buttons
+            </p>
+        </div>
+        
+        <div class="test-actions">
+            <button id="openDrawerBtn" class="test-button">
+                Open Word Drawer
+            </button>
+            <button id="openWithDataBtn" class="test-button">
+                Open with Sample Data
+            </button>
+            <button id="toggleThemeBtn" class="test-button">
+                Toggle Theme
+            </button>
+        </div>
+        
+        <div class="test-info">
+            <h2>Testing Instructions</h2>
+            <ul>
+                <li>Use keyboard only (no mouse) to navigate</li>
+                <li>Test with screen reader (NVDA, VoiceOver, JAWS)</li>
+                <li>Verify focus indicators are visible</li>
+                <li>Check color contrast in both themes</li>
+                <li>Test with browser zoom at 200%</li>
+            </ul>
+        </div>
+    </main>
+    
+    <!-- Component Scripts -->
+    <script src="../../extension/components/utils/event-bus.js"></script>
+    <script src="../../extension/components/utils/BaseComponent.js"></script>
+    <script src="../../extension/utils/accessibility/FocusManager.js"></script>
+    <script src="../../extension/utils/accessibility/ARIAManager.js"></script>
+    <script src="../../extension/utils/accessibility/KeyboardManager.js"></script>
+    <script src="../../extension/components/complex/word-drawer-v2.js"></script>
+    
+    <!-- Test Script -->
+    <script>
+        // Sample word data for testing
+        const sampleWordData = {
+            key: 'accessibility_test',
+            word: 'accessibility',
+            translation: '可访问性；无障碍',
+            detailedInfo: {
+                definitions: [
+                    {
+                        pos: 'noun',
+                        cn: '可访问性；易接近性',
+                        en: 'the quality of being able to be reached or entered',
+                        example: 'The building was designed with accessibility in mind.'
+                    },
+                    {
+                        pos: 'noun',
+                        cn: '无障碍设计',
+                        en: 'the design of products, devices, services for people with disabilities',
+                        example: 'Web accessibility ensures everyone can use the internet.'
+                    }
+                ],
+                phonetic: '/əkˌsesəˈbɪləti/',
+                complexity: 'advanced',
+                frequency: 'common'
+            },
+            lookupHistory: [
+                {
+                    timestamp: Date.now() - 86400000,
+                    context: 'Web development article',
+                    url: 'https://example.com'
+                },
+                {
+                    timestamp: Date.now() - 172800000,
+                    context: 'Accessibility guidelines',
+                    url: 'https://w3.org'
+                }
+            ],
+            starred: true,
+            masteryLevel: 2
+        };
+        
+        // Initialize drawer
+        let drawer = null;
+        
+        function initDrawer() {
+            if (!drawer) {
+                drawer = new WordDrawerV2();
+                console.log('WordDrawerV2 initialized');
+            }
+        }
+        
+        // Event handlers
+        document.getElementById('openDrawerBtn').addEventListener('click', () => {
+            initDrawer();
+            drawer.show({
+                key: 'test_word',
+                word: 'test',
+                translation: '测试'
+            });
+        });
+        
+        document.getElementById('openWithDataBtn').addEventListener('click', () => {
+            initDrawer();
+            drawer.show(sampleWordData);
+        });
+        
+        document.getElementById('toggleThemeBtn').addEventListener('click', () => {
+            document.body.classList.toggle('theme-dark');
+            document.body.classList.toggle('theme-light');
+        });
+        
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('Accessibility test page loaded');
+            console.log('Ready for Lighthouse audit');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1502 @@
+/**
+ * 单词翻译助手 - 内容脚本样式文件
+ *
+ * 优化版本：改进字体系统和视觉设计
+ * 1. 使用中文字体提升阅读体验
+ * 2. 优化色彩系统，避免AI风格
+ * 3. 翻译弹出窗口样式
+ * 4. 点击提示工具条样式
+ * 5. 高亮单词样式
+ * 6. 动画效果
+ * 7. 响应式设计
+ */
+
+/* ==================== */
+/* 字体系统 - 优化中文字体 */
+/* ==================== */
+
+/* 引入中文字体 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+
+:root {
+  /* 字体系统 */
+  --font-display: 'Noto Serif SC', 'STSong', 'SimSun', Georgia, serif;  /* 标题：优雅衬线 */
+  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;  /* 正文：清晰无衬线 */
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;  /* 音标/代码 */
+  
+  /* 优化的色彩系统 - 学术风格 */
+  --color-primary: #1e3a5f;        /* 深夜蓝 */
+  --color-accent: #d4a574;         /* 羊皮纸色 */
+  --color-bg-dark: #0f1419;        /* 深色背景 */
+  --color-bg-card: rgba(30, 58, 95, 0.25);  /* 卡片背景 */
+  --color-text-primary: #f7f5f0;   /* 温暖米白 */
+  --color-text-secondary: #b8b3a8; /* 羊皮纸灰 */
+  --color-text-tertiary: #8a8376;  /* 深灰 */
+  
+  /* 间距系统 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+}
+
+/* ==================== */
+/* 翻译弹出窗口样式 */
+/* ==================== */
+
+/**
+ * 翻译弹出窗口主容器
+ * 固定定位的翻译结果显示窗口
+ */
+.translation-popup {
+  position: fixed;                    /* 固定定位，不随页面滚动 */
+  background: rgba(255, 255, 255, 0.15); /* 半透明背景 */
+  backdrop-filter: blur(15px);        /* 玻璃磨砂效果 */
+  border: 2px solid rgba(255, 255, 255, 0.3); /* 半透明边框 */
+  border-radius: 16px;               /* 大圆角边框 */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.15), /* 阴影效果 */
+    0 0 20px rgba(74, 144, 226, 0.3); /* 蓝色发光效果 */
+  z-index: 10000;                    /* 高层级确保在最顶层 */
+  min-width: 200px;                  /* 最小宽度 */
+  max-width: 400px;                  /* 最大宽度 */
+  font-family: var(--font-body); /* 优化后的中文字体 */
+  animation: popupFadeIn 0.3s ease-out; /* 淡入动画 */
+  transition: all 0.3s ease;         /* 平滑过渡效果 */
+}
+
+/**
+ * 弹出窗口淡入动画
+ * 从透明、向上偏移和缩放的状态渐变到完全可见
+ */
+@keyframes popupFadeIn {
+  0% {
+    opacity: 0;                      /* 初始透明 */
+    transform: translateY(-15px) scale(0.92) rotateX(5deg); /* 初始向上偏移、缩小和轻微旋转 */
+    box-shadow: 
+      0 0 0 rgba(0, 0, 0, 0.15), /* 初始无阴影 */
+      0 0 0 rgba(74, 144, 226, 0.3); /* 初始无发光效果 */
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02) rotateX(-2deg); /* 中间状态：轻微向上偏移、放大和反向旋转 */
+  }
+  100% {
+    opacity: 1;                      /* 最终完全可见 */
+    transform: translateY(0) scale(1) rotateX(0); /* 最终位置：无偏移、正常大小和无旋转 */
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.15), /* 阴影效果 */
+      0 0 20px rgba(74, 144, 226, 0.3); /* 蓝色发光效果 */
+  }
+}
+
+/**
+ * 弹出窗口淡出动画
+ * 从完全可见渐变到透明、向下偏移和缩放
+ */
+@keyframes popupFadeOut {
+  0% {
+    opacity: 1;                      /* 初始完全可见 */
+    transform: translateY(0) scale(1) rotateX(0); /* 初始位置：无偏移、正常大小和无旋转 */
+  }
+  100% {
+    opacity: 0;                      /* 最终透明 */
+    transform: translateY(10px) scale(0.95) rotateX(-5deg); /* 最终向下偏移、缩小和轻微旋转 */
+  }
+}
+
+/**
+ * 翻译弹出窗口头部样式
+ * 包含标题和关闭按钮的区域
+ */
+.translation-popup-header {
+  display: flex;                      /* 弹性布局 */
+  justify-content: space-between;     /* 两端对齐 */
+  align-items: center;                /* 垂直居中 */
+  padding: 12px 16px;                /* 内边距 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* 半透明底部边框 */
+  background: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+  border-radius: 12px 12px 0 0;      /* 顶部圆角 */
+}
+
+/**
+ * 弹出窗口关闭按钮样式
+ * 右上角的关闭按钮
+ */
+.translation-popup-close {
+  background: none;                   /* 无背景 */
+  border: none;                      /* 无边框 */
+  color: #666;                       /* 灰色文字 */
+  font-size: 20px;                   /* 大字体 */
+  cursor: pointer;                   /* 鼠标指针 */
+  padding: 0;                        /* 无内边距 */
+  width: 24px;                       /* 固定宽度 */
+  height: 24px;                      /* 固定高度 */
+  line-height: 24px;                 /* 行高 */
+  border-radius: 4px;                /* 小圆角 */
+  transition: background-color 0.2s; /* 背景色过渡动画 */
+}
+
+/**
+ * 关闭按钮悬停效果
+ * 鼠标悬停时显示背景色
+ */
+.translation-popup-close:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 半透明黑色背景 */
+}
+
+.translation-popup-content {
+  padding: 15px;
+}
+
+.translation-popup-word {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.translation-popup-translation {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* 高亮单词样式 */
+.translated-word-highlight,
+trae-highlight.translated-word-highlight {
+  all: unset; /* 重置所有继承属性 */
+  display: inline; /* 保持行内显示 */
+  position: relative;
+  padding: 0 2px;
+  margin: 0 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  
+  /* 强制继承父元素的字体属性 */
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  color: inherit;
+  line-height: inherit;
+  text-decoration: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  
+  transition: background-color 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  will-change: background-color, box-shadow, filter;
+  background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 移除额外的伪元素动画以避免光标闪烁 */
+
+/* 保持悬停效果轻量化 */
+
+.translated-word-highlight:hover,
+trae-highlight.translated-word-highlight:hover {
+  background: linear-gradient(120deg, #8fd3f4 0%, #84fab0 100%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  filter: brightness(1.06);
+}
+
+/* 词性对应的高亮颜色，与弹窗保持同一渐变风格 */
+.translated-word-highlight.pos-noun {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.translated-word-highlight.pos-noun:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-verb {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.translated-word-highlight.pos-verb:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-adjective {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.translated-word-highlight.pos-adjective:hover {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-adverb {
+  background: linear-gradient(135deg, #ff9f40 0%, #ffcd56 100%);
+}
+
+.translated-word-highlight.pos-adverb:hover {
+  background: linear-gradient(135deg, #ffcd56 0%, #ff9f40 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-pronoun {
+  background: linear-gradient(135deg, #48bb78 0%, #4299e1 100%);
+}
+
+.translated-word-highlight.pos-pronoun:hover {
+  background: linear-gradient(135deg, #4299e1 0%, #48bb78 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-preposition {
+  background: linear-gradient(135deg, #a78bfa 0%, #f973e1 100%);
+}
+
+.translated-word-highlight.pos-preposition:hover {
+  background: linear-gradient(135deg, #f973e1 0%, #a78bfa 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-conjunction {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.translated-word-highlight.pos-conjunction:hover {
+  background: linear-gradient(135deg, #fed6e3 0%, #a8edea 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-interjection {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.translated-word-highlight.pos-interjection:hover {
+  background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-determiner,
+.translated-word-highlight.pos-article {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+.translated-word-highlight.pos-determiner:hover,
+.translated-word-highlight.pos-article:hover {
+  background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-numeral {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.translated-word-highlight.pos-numeral:hover {
+  background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-auxiliary,
+.translated-word-highlight.pos-modal {
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+
+.translated-word-highlight.pos-auxiliary:hover,
+.translated-word-highlight.pos-modal:hover {
+  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-phrase {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.translated-word-highlight.pos-phrase:hover {
+  background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+  filter: brightness(1.1);
+}
+
+.translated-word-highlight.pos-default {
+  background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.translated-word-highlight.pos-default:hover {
+  background: linear-gradient(120deg, #8fd3f4 0%, #84fab0 100%);
+  filter: brightness(1.1);
+}
+
+/* 点击提示样式 */
+.click-tooltip {
+  position: fixed;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%);
+  color: white;
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 10001;
+  max-width: 340px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  backdrop-filter: blur(18px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  animation: tooltipFadeIn 0.4s ease-out, tooltipFloat 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.click-tooltip:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 0 35px rgba(102, 126, 234, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* 悬浮动画 */
+@keyframes tooltipFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.tooltip-word {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 6px 14px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.tooltip-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.tooltip-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tooltip-phonetic {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.tooltip-part-of-speech {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: inline-block;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tooltip-translation {
+  font-size: 16px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-weight: 500;
+  background: transparent !important;
+  opacity: 0.85;
+}
+
+.tooltip-count {
+  font-size: 12px;
+  opacity: 0.85;
+  padding-top: 6px;
+  margin-bottom: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tooltip-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tooltip-remove-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip-remove-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 词性主题颜色 - 增强版 */
+
+/* 名词 - 紫色渐变 */
+.click-tooltip.pos-noun {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 动词 - 粉橙渐变 */
+.click-tooltip.pos-verb {
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.9) 0%, rgba(245, 87, 108, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(245, 87, 108, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 形容词 - 蓝青渐变 */
+.click-tooltip.pos-adjective {
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(79, 172, 254, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 副词 - 橙黄渐变 */
+.click-tooltip.pos-adverb {
+  background: linear-gradient(135deg, rgba(255, 159, 64, 0.9) 0%, rgba(255, 205, 86, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(255, 159, 64, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 代词 - 绿蓝渐变 */
+.click-tooltip.pos-pronoun {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.9) 0%, rgba(66, 153, 225, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(72, 187, 120, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 介词 - 紫粉渐变 */
+.click-tooltip.pos-preposition {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.9) 0%, rgba(249, 115, 225, 0.9) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(167, 139, 250, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 统一所有词性的文字和按钮样式 */
+.click-tooltip .tooltip-phonetic,
+.click-tooltip .tooltip-part-of-speech,
+.click-tooltip .tooltip-count,
+.click-tooltip .tooltip-primary-sense-pos,
+.click-tooltip .tooltip-primary-sense-cn,
+.click-tooltip .tooltip-part-of-speech-main,
+.click-tooltip .tooltip-definition-text,
+.click-tooltip .tooltip-example,
+.click-tooltip .tooltip-example-cn {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.click-tooltip .tooltip-close {
+  color: white;
+}
+
+.click-tooltip .tooltip-remove-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+}
+
+.click-tooltip .tooltip-remove-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 优化高亮单词的鼠标悬停效果 */
+.translated-word-highlight {
+  transition: all 0.2s ease;
+}
+
+/* 增强的词性主题颜色 - 确保所有词性都有独特的渐变风格 */
+
+/* 名词 - 紫色渐变 */
+.translated-word-highlight.pos-noun {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.translated-word-highlight.pos-noun:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-noun {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 动词 - 粉橙渐变 */
+.translated-word-highlight.pos-verb {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.translated-word-highlight.pos-verb:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-verb {
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.9) 0%, rgba(245, 87, 108, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(245, 87, 108, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 形容词 - 蓝青渐变 */
+.translated-word-highlight.pos-adjective {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.translated-word-highlight.pos-adjective:hover {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-adjective {
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(79, 172, 254, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 副词 - 橙黄渐变 */
+.translated-word-highlight.pos-adverb {
+  background: linear-gradient(135deg, #ff9f40 0%, #ffcd56 100%);
+}
+
+.translated-word-highlight.pos-adverb:hover {
+  background: linear-gradient(135deg, #ffcd56 0%, #ff9f40 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-adverb {
+  background: linear-gradient(135deg, rgba(255, 159, 64, 0.9) 0%, rgba(255, 205, 86, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(255, 159, 64, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 代词 - 绿蓝渐变 */
+.translated-word-highlight.pos-pronoun {
+  background: linear-gradient(135deg, #48bb78 0%, #4299e1 100%);
+}
+
+.translated-word-highlight.pos-pronoun:hover {
+  background: linear-gradient(135deg, #4299e1 0%, #48bb78 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-pronoun {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.9) 0%, rgba(66, 153, 225, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(72, 187, 120, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 介词 - 紫粉渐变 */
+.translated-word-highlight.pos-preposition {
+  background: linear-gradient(135deg, #a78bfa 0%, #f973e1 100%);
+}
+
+.translated-word-highlight.pos-preposition:hover {
+  background: linear-gradient(135deg, #f973e1 0%, #a78bfa 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-preposition {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.9) 0%, rgba(249, 115, 225, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(167, 139, 250, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 连词 - 粉蓝渐变 */
+.translated-word-highlight.pos-conjunction {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+  text-shadow: none;
+}
+
+.translated-word-highlight.pos-conjunction:hover {
+  background: linear-gradient(135deg, #fed6e3 0%, #a8edea 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-conjunction {
+  background: linear-gradient(135deg, rgba(168, 237, 234, 0.9) 0%, rgba(254, 214, 227, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(168, 237, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 感叹词 - 橙粉渐变 */
+.translated-word-highlight.pos-interjection {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #333;
+  text-shadow: none;
+}
+
+.translated-word-highlight.pos-interjection:hover {
+  background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-interjection {
+  background: linear-gradient(135deg, rgba(255, 236, 210, 0.9) 0%, rgba(252, 182, 159, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(252, 182, 159, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 限定词/冠词 - 粉紫渐变 */
+.translated-word-highlight.pos-determiner,
+.translated-word-highlight.pos-article {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  color: #333;
+  text-shadow: none;
+}
+
+.translated-word-highlight.pos-determiner:hover,
+.translated-word-highlight.pos-article:hover {
+  background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-determiner,
+.click-tooltip.pos-article {
+  background: linear-gradient(135deg, rgba(255, 154, 158, 0.9) 0%, rgba(254, 207, 239, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(255, 154, 158, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 数词 - 黄绿渐变 */
+.translated-word-highlight.pos-numeral {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.translated-word-highlight.pos-numeral:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-numeral {
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.9) 0%, rgba(245, 87, 108, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(245, 87, 108, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 助动词/情态动词 - 蓝紫渐变 */
+.translated-word-highlight.pos-auxiliary,
+.translated-word-highlight.pos-modal {
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+
+.translated-word-highlight.pos-auxiliary:hover,
+.translated-word-highlight.pos-modal:hover {
+  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-auxiliary,
+.click-tooltip.pos-modal {
+  background: linear-gradient(135deg, rgba(161, 196, 253, 0.9) 0%, rgba(194, 233, 251, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(161, 196, 253, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 词组 - 绿蓝渐变 */
+.translated-word-highlight.pos-phrase {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.translated-word-highlight.pos-phrase:hover {
+  background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-phrase {
+  background: linear-gradient(135deg, rgba(67, 233, 123, 0.9) 0%, rgba(56, 249, 215, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(67, 233, 123, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 默认词性 - 蓝绿渐变 */
+.translated-word-highlight.pos-default {
+  background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.translated-word-highlight.pos-default:hover {
+  background: linear-gradient(120deg, #8fd3f4 0%, #84fab0 100%);
+  filter: brightness(1.1);
+}
+
+.click-tooltip.pos-default {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+
+
+
+
+
+
+/* 默认词性样式 - 改为绿蓝渐变以匹配高亮颜色 */
+.click-tooltip.pos-default {
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.95) 0%, rgba(66, 153, 225, 0.95) 100%);
+  color: white;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(72, 187, 120, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.click-tooltip.pos-default .tooltip-phonetic,
+.click-tooltip.pos-default .tooltip-part-of-speech,
+.click-tooltip.pos-default .tooltip-count {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.click-tooltip.pos-default .tooltip-close {
+  color: white;
+}
+
+.click-tooltip.pos-default .tooltip-remove-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+}
+
+.click-tooltip.pos-default .tooltip-remove-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@keyframes tooltipFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.92) rotateX(5deg);
+    box-shadow: 
+      0 0 0 rgba(0, 0, 0, 0.35),
+      0 0 0 rgba(102, 126, 234, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02) rotateX(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.35),
+      0 0 25px rgba(102, 126, 234, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+/**
+ * 点击提示框淡出动画
+ */
+@keyframes tooltipFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.35),
+      0 0 25px rgba(102, 126, 234, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95) rotateX(-5deg);
+    box-shadow: 
+      0 0 0 rgba(0, 0, 0, 0.35),
+      0 0 0 rgba(102, 126, 234, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* ==================== */
+/* 新功能按钮样式 */
+/* ==================== */
+
+/* 功能按钮组容器 */
+.tooltip-function-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 通用按钮样式 */
+.tooltip-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
+              0 0 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 按钮悬停效果 */
+.tooltip-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25),
+              0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* 按钮点击效果 */
+.tooltip-btn:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2),
+              0 0 8px rgba(255, 255, 255, 0.2);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 收藏按钮特殊样式 */
+.tooltip-btn.starred {
+  background: rgba(255, 215, 0, 0.3);
+  border-color: rgba(255, 215, 0, 0.5);
+  color: gold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
+              0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.tooltip-btn.starred:hover {
+  background: rgba(255, 215, 0, 0.5);
+  border-color: rgba(255, 215, 0, 0.7);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25),
+              0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* 关闭按钮样式增强 */
+.tooltip-close {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tooltip-close:hover {
+  transform: rotate(90deg) scale(1.2);
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 0, 0, 0.1);
+}
+
+/* 详情按钮样式 */
+.tooltip-detail-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px; /* 与取消高亮按钮的间距 */
+}
+
+.tooltip-detail-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip-detail-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 移除按钮样式增强 */
+.tooltip-remove-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tooltip-remove-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip-remove-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 收藏按钮选中状态 */
+.tooltip-btn.star-btn.starred {
+  color: #f1c40f;
+  background: rgba(241, 196, 15, 0.2);
+  border-color: rgba(241, 196, 15, 0.4);
+}
+
+/* 收藏按钮选中状态悬停效果 */
+.tooltip-btn.star-btn.starred:hover {
+  background: rgba(241, 196, 15, 0.3);
+  border-color: rgba(241, 196, 15, 0.6);
+  transform: translateY(-2px) scale(1.1);
+}
+
+/* 改进的弹窗样式 */
+.click-tooltip {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+/* 弹窗淡入动画增强 */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* 按钮图标样式 */
+.tooltip-btn svg {
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* 复制按钮成功状态 */
+.tooltip-btn.copy-btn.success {
+  background: rgba(46, 204, 113, 0.3);
+  border-color: rgba(46, 204, 113, 0.5);
+}
+
+/* 发音按钮激活状态 */
+.tooltip-btn.speak-btn.speaking {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ==================== */
+/* 加载状态指示器样式 */
+/* ==================== */
+
+/* 加载指示器主容器 */
+#translation-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 加载指示器内容 */
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-width: 200px;
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* 加载动画 - 时空穿梭效果 */
+.loader-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+  animation: spaceScale 2s ease-in-out infinite;
+}
+
+/* 主环形 - 外层时空隧道 */
+.loader-spinner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent 40%, #667eea 50%, transparent 60%);
+  background-size: 200% 200%;
+  animation: spaceRotate 1.5s linear infinite, spacePulse 2s ease-in-out infinite;
+  filter: blur(2px);
+}
+
+/* 次级环形 - 中层时空隧道 */
+.loader-spinner::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(-45deg, transparent 30%, #764ba2 50%, transparent 70%);
+  background-size: 200% 200%;
+  animation: spaceRotateReverse 1s linear infinite, spacePulse 2s ease-in-out infinite 0.3s;
+  filter: blur(1px);
+}
+
+/* 中心发光点 - 穿梭光源 */
+.loader-spinner-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #667eea 50%, transparent 100%);
+  animation: spaceGlow 1.5s ease-in-out infinite, spacePulse 1.5s ease-in-out infinite 0.5s;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+  z-index: 2;
+}
+
+/* 加载文本 */
+.loader-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 缩放动画 */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 主旋转动画 - 顺时针 */
+@keyframes spaceRotate {
+  0% {
+    transform: rotate(0deg);
+    background-position: 0% 0%;
+  }
+  100% {
+    transform: rotate(360deg);
+    background-position: 200% 200%;
+  }
+}
+
+/* 反向旋转动画 - 逆时针 */
+@keyframes spaceRotateReverse {
+  0% {
+    transform: rotate(0deg);
+    background-position: 0% 0%;
+  }
+  100% {
+    transform: rotate(-360deg);
+    background-position: -200% -200%;
+  }
+}
+
+/* 缩放呼吸效果 */
+@keyframes spaceScale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 脉冲效果 */
+@keyframes spacePulse {
+  0%, 100% {
+    opacity: 0.7;
+    filter: blur(2px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(1px);
+  }
+}
+
+/* 中心发光效果 */
+@keyframes spaceGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 30px rgba(102, 126, 234, 1);
+  }
+}
+
+/* ==================== */
+/* 弹窗滚动功能 */
+.click-tooltip {
+  max-height: 400px; /* 最大高度限制 */
+  overflow-y: auto; /* 垂直滚动 */
+}
+
+/* 优化滚动条样式 */
+.click-tooltip::-webkit-scrollbar {
+  width: 6px;
+}
+
+.click-tooltip::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.click-tooltip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+}
+
+.click-tooltip::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* 结构化释义样式 */
+/* ==================== */
+
+/* 全局平滑滚动 */
+* {
+  scroll-behavior: smooth;
+}
+
+/* 结构化释义容器 */
+.tooltip-meanings {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 8px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* 自定义滚动条样式 */
+.tooltip-meanings::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tooltip-meanings::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.tooltip-meanings::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.tooltip-meanings::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* 火狐浏览器滚动条样式 */
+.tooltip-meanings {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
+}
+
+/* 主要释义样式 */
+.tooltip-primary-definition {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(5px);
+}
+
+/* 主要释义内容 */
+.tooltip-primary-definition-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 主要释义词义条目 */
+.tooltip-primary-sense {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* 主要释义词性标签 */
+.tooltip-primary-sense-pos {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 12px;
+  min-width: 40px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 主要释义中文 */
+.tooltip-primary-sense-cn {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000000;
+  opacity: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 10px rgba(252, 6, 10, 0.864);
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+/* 词性分组 */
+.tooltip-pos-group {
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+/* 主要词性标签 */
+.tooltip-part-of-speech-main {
+  display: inline-block;
+  font-weight: 600;
+  color: inherit;
+  margin-bottom: 10px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}
+
+/* 单个释义 */
+.tooltip-definition {
+  display: flex;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+/* 释义编号 */
+.tooltip-definition-number {
+  font-weight: 600;
+  margin-right: 8px;
+  color: inherit;
+  opacity: 0.8;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* 释义内容容器 */
+.tooltip-definition-content {
+  flex: 1;
+}
+
+/* 英翻英释义 */
+.tooltip-definition-text {
+  margin-bottom: 4px;
+  color: inherit;
+  opacity: 0.9;
+}
+
+/* 中文强调释义 */
+.tooltip-definition-text-cn {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: inherit;
+  font-size: 15px;
+  opacity: 1;
+}
+
+/* 英文例句 */
+.tooltip-example {
+  font-style: italic;
+  opacity: 0.8;
+  font-size: 13px;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  color: inherit;
+}
+
+/* 中文例句译文 */
+.tooltip-example-cn {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 1;
+  font-size: 13px;
+  margin-left: 4px;
+  color: inherit;
+}
+
+/* ==================== */
+/* 图片懒加载样式 */
+/* ==================== */
+
+.lazy-loading {
+  opacity: 0.6;
+  filter: blur(8px);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loadingShimmer 1.5s infinite;
+}
+
+@keyframes loadingShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.lazy-loaded {
+  opacity: 1;
+  filter: blur(0);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  animation: none;
+}
+
+.lazy-error {
+  opacity: 0.4;
+  filter: grayscale(100%);
+  background: #f5f5f5;
+}
+

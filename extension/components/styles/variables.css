@@ -1,0 +1,195 @@
+/* CSS变量系统 - 主题颜色 */
+
+@property --liquid-angle-1 {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --liquid-angle-2 {
+  syntax: "<angle>";
+  initial-value: 120deg;
+  inherits: false;
+}
+
+@property --liquid-scale {
+  syntax: "<percentage>";
+  initial-value: 100%;
+  inherits: false;
+}
+
+@property --liquid-hue-1 {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@property --liquid-hue-2 {
+  syntax: "<number>";
+  initial-value: 180;
+  inherits: false;
+}
+
+:root {
+  /* 背景颜色变量 - 增强现代感和深度 */
+  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-input: rgba(255, 255, 255, 0.6);
+  --bg-input-focus: rgba(255, 255, 255, 0.95);
+  --bg-word-list: rgba(255, 255, 255, 0.2);
+  --bg-highlight: rgba(255, 255, 255, 0.4);
+  
+  /* 文字颜色变量 - 增强对比度和可读性 */
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --text-placeholder: #a0aec0;
+  
+  /* UI元素颜色变量 - 增强层次感 */
+  --border-color: rgba(255, 255, 255, 0.6);
+  --border-hover: rgba(255, 255, 255, 0.9);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  
+  /* 强调色变量 - 更鲜艳的色彩 */
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --accent-success: #38a169;
+  --accent-danger: #e53e3e;
+  --accent-warning: #dd6b20;
+  --accent-info: #3182ce;
+  --accent-purple: #9f7aea;
+  --accent-pink: #ed64a6;
+  --filter-close-hover: rgba(239, 68, 68, 0.18);
+  --filter-close-active-bg: rgba(239, 68, 68, 0.25);
+  --filter-close-focus-ring: rgba(239, 68, 68, 0.5);
+  
+  /* 星标颜色 */
+  --star-color: #f6ad55;
+  --star-hover: #ed8936;
+  
+  /* 装饰条颜色 - 更鲜艳的渐变 */
+  --decoration-color: linear-gradient(135deg, rgba(168, 237, 234, 0.8) 0%, rgba(254, 214, 227, 0.8) 100%);
+  
+  /* 过渡动画 - 更流畅的效果 */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 动画持续时间变量 */
+  --animation-duration-fast: 200ms;
+  --animation-duration-normal: 300ms;
+  --animation-duration-slow: 500ms;
+  --animation-duration-slower: 800ms;
+  --animation-duration-slowest: 1000ms;
+  
+  /* 动画缓动函数变量 */
+  --animation-timing-linear: linear;
+  --animation-timing-ease: ease;
+  --animation-timing-ease-in: ease-in;
+  --animation-timing-ease-out: ease-out;
+  --animation-timing-ease-in-out: ease-in-out;
+  --animation-timing-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-timing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Splash动画变量 */
+  --splash-duration: 2.0s;
+
+  /* 流体边框渐变色 - 默认浅色主题使用深色光效 */
+  --fluid-border-gradient: conic-gradient(
+    from 0deg,
+    #312e81, /* Indigo 900 - 更深 */
+    #831843, /* Pink 900 - 更深 */
+    #7f1d1d, /* Red 900 - 更深 */
+    #78350f, /* Amber 900 - 更深 */
+    #14532d, /* Green 900 - 更深 */
+    #0c4a6e, /* Sky 900 - 更深 */
+    #1e3a8a, /* Blue 900 - 更深 */
+    #312e81
+  );
+  
+  /* 单词卡片背景色 - 浅色模式 */
+  --bg-word-card: rgba(255, 255, 255, 0.9);
+  --bg-word-card-hover: rgba(255, 255, 255, 0.98);
+
+  /* =========================================
+     Dashboard 2.0 专属变量 (Dark Glassmorphism)
+     ========================================= */
+  --dash-bg-dark: #0f172a;
+  --dash-bg-card: #1e293b;
+  --dash-text-main: #f8fafc;
+  --dash-text-sub: #94a3b8;
+  
+  /* 霓虹渐变 (Neon Gradients) */
+  --dash-grad-cyan: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%);
+  --dash-grad-pink: linear-gradient(135deg, #f472b6 0%, #db2777 100%);
+  --dash-grad-amber: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  --dash-grad-emerald: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  --dash-grad-violet: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+}
+
+/* 深色主题变量 */
+body.theme-dark {
+  /* 状态颜色变量 - 深色模式 */
+  --success-color: #4cd964;
+  --error-color: #ff453a;
+
+  /* 流体边框渐变色 - 深色主题使用冷色调霓虹光效 - 适配Slate蓝背景 */
+  --fluid-border-gradient: conic-gradient(
+    from 0deg,
+    #a78bfa, /* Violet 400 - 亮紫 */
+    #60a5fa, /* Blue 400 - 亮蓝 */
+    #22d3ee, /* Cyan 400 - 青色 */
+    #34d399, /* Emerald 400 - 翠绿 */
+    #818cf8, /* Indigo 400 - 靛蓝 */
+    #c084fc, /* Purple 400 - 紫色 */
+    #f472b6, /* Pink 400 - 粉色 */
+    #a78bfa
+  );
+  
+  /* 单词卡片背景色 - 深色模式 - 恢复为极夜黑 */
+  --bg-word-card: rgba(2, 6, 23, 0.9);
+  --bg-word-card-hover: rgba(2, 6, 23, 0.98);
+
+  /* 背景颜色变量 - 更深邃的背景以突出霓虹光效 */
+  --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  --bg-secondary: rgba(15, 23, 42, 0.95);
+  --bg-card: rgba(30, 41, 59, 0.85);
+  --bg-card-hover: rgba(30, 41, 59, 0.95);
+  --bg-input: rgba(15, 23, 42, 0.7);
+  --bg-input-focus: rgba(15, 23, 42, 0.95);
+  --bg-word-list: rgba(0, 0, 0, 0.3);
+  --bg-highlight: rgba(255, 255, 255, 0.08);
+  
+  /* 文字颜色变量 - 提高对比度 */
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #94a3b8;
+  --text-placeholder: #64748b;
+  
+  /* UI元素颜色变量 - 增强边框发光感 */
+  --border-color: rgba(255, 255, 255, 0.15);
+  --border-hover: rgba(167, 139, 250, 0.5); /* Violet 400 */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  
+  /* 强调色变量 - 霓虹风格 (Neon Style) */
+  --accent-primary: #60a5fa;   /* Blue 400 - 主色调改为亮蓝色 */
+  --accent-secondary: #818cf8; /* Indigo 400 */
+  --accent-success: #34d399;   /* Emerald 400 */
+  --accent-danger: #f87171;    /* Red 400 */
+  --accent-warning: #fbbf24;   /* Amber 400 */
+  --accent-info: #38bdf8;      /* Sky 400 */
+  --accent-purple: #c084fc;    /* Purple 400 */
+  --accent-pink: #f472b6;      /* Pink 400 */
+  --filter-close-hover: rgba(239, 68, 68, 0.18);
+  --filter-close-active-bg: rgba(239, 68, 68, 0.28);
+  --filter-close-focus-ring: rgba(239, 68, 68, 0.5);
+}

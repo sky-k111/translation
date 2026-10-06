@@ -1,0 +1,477 @@
+/* Button组件样式 */
+
+/* 普通按钮样式 */
+.btn {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* 普通按钮悬停效果 */
+.btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+/* 普通按钮激活效果 */
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* 返回按钮样式 */
+.back-btn {
+  /* 重置基础样式 */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-radius: 20px; /* 圆角矩形，保持按钮形态 */
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* 返回按钮内部流光效果 */
+.back-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 60%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.5s ease;
+  z-index: 0;
+}
+
+/* 确保返回按钮文字在流光之上 */
+.back-btn span,
+.back-btn i {
+  position: relative;
+  z-index: 1;
+}
+
+/* 返回按钮悬停交互效果 */
+.back-btn:hover {
+  transform: translateY(-2px); /* 轻微上浮 */
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  color: var(--accent-primary);
+}
+
+/* 返回按钮悬停时的流光效果 */
+.back-btn:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 返回按钮激活效果 */
+.back-btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* 暗色模式下的返回按钮样式 */
+[data-theme="dark"] .back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 暗色模式下的返回按钮悬停效果 */
+[data-theme="dark"] .back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+}
+
+/* 设置按钮样式 */
+.settings-btn {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* 设置按钮悬停效果 */
+.settings-btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+/* 设置按钮激活效果 */
+.settings-btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* 导入和导出按钮样式 */
+.btn--import,
+.btn--export,
+.import-btn,
+.export-btn,
+.settings-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  gap: 4px;
+}
+
+/* 导入和导出按钮悬停效果 */
+.btn--import:hover,
+.btn--export:hover,
+.import-btn:hover,
+.export-btn:hover,
+.settings-btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+/* 清空按钮样式 */
+.btn--clear,
+.clear-btn {
+  flex: 1;
+  height: 30px;
+  padding: 0 10px;
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--accent-danger);
+  border-color: rgba(255, 107, 107, 0.2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  gap: 4px;
+}
+
+/* 清空按钮悬停效果 */
+.btn--clear:hover,
+.clear-btn:hover {
+  background: var(--accent-danger);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 视图切换按钮样式 */
+.btn--view,
+.view-btn {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 5px;
+  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 视图切换按钮悬停效果 */
+.btn--view:hover,
+.view-btn:hover {
+  background: var(--accent-primary);
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 视图切换按钮激活状态 */
+.btn--view.active,
+.view-btn.active {
+  background: var(--accent-primary);
+  color: white;
+  border-color: transparent;
+}
+
+/* 视图切换按钮图标样式 */
+.btn--view svg,
+.view-btn svg {
+  width: 14px;
+  height: 14px;
+  transition: all var(--transition-normal);
+}
+
+/* 视图切换按钮悬停和激活状态下的图标样式 */
+.btn--view:hover svg,
+.btn--view.active svg,
+.view-btn:hover svg,
+.view-btn.active svg {
+  stroke: white;
+}
+
+/* 操作按钮样式 */
+.btn--action,
+.action-btn {
+  padding: 8px 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 操作按钮伪元素样式 */
+.btn--action::before,
+.action-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 操作按钮悬停效果 */
+.btn--action:hover,
+.action-btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 0 15px rgba(var(--accent-primary-rgb), 0.25);
+  border-color: var(--accent-primary);
+}
+
+/* 操作按钮悬停状态下的伪元素样式 */
+.btn--action:hover::before,
+.action-btn:hover::before {
+  opacity: 1;
+}
+
+/* 操作按钮激活效果 */
+.btn--action:active,
+.action-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* 复习按钮悬停效果 */
+.btn--review:hover,
+.review-btn:hover {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: var(--accent-success);
+}
+
+/* 分享按钮悬停效果 */
+.btn--share:hover,
+.share-btn:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: var(--accent-primary);
+}
+
+/* 学习按钮样式 */
+.btn--learning,
+.learning-btn {
+  width: 100%;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* 学习按钮伪元素样式 */
+.btn--learning::before,
+.learning-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 学习按钮悬停效果 */
+.btn--learning:hover,
+.learning-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--border-color-hover);
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* 学习按钮悬停状态下的伪元素样式 */
+.btn--learning:hover::before,
+.learning-btn:hover::before {
+  opacity: 1;
+}
+
+/* 学习按钮激活效果 */
+.btn--learning:active,
+.learning-btn:active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* 开始学习按钮特殊样式 */
+#startLearningBtn {
+  border-left: 4px solid #4CAF50;
+}
+
+/* 复习难点按钮特殊样式 */
+#reviewDifficultBtn {
+  border-left: 4px solid #FF5722;
+}
+
+/* 每日挑战按钮特殊样式 */
+#dailyChallengeBtn {
+  border-left: 4px solid #673AB7;
+}
+
+/* 学习按钮图标样式 */
+.learning-btn .icon-svg {
+  margin-right: 12px;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+
+/* 学习按钮悬停状态下的图标样式 */
+.learning-btn:hover .icon-svg {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* 删除按钮样式 */
+.btn--delete,
+.delete-btn {
+  background: rgba(255, 107, 107, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.25);
+  position: relative;
+  z-index: 10; /* 确保在其他元素之上 */
+}
+
+/* 删除按钮悬停效果 */
+.btn--delete:hover,
+.delete-btn:hover {
+  background: rgba(255, 82, 82, 0.85);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+}
+
+/* 删除按钮激活效果 */
+.btn--delete:active,
+.delete-btn:active {
+  transform: translateY(0);
+}
+
+/* 复习按钮特殊样式 */
+.btn--review:hover {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: var(--accent-success);
+}
+
+/* 分享按钮特殊样式 */
+.btn--share:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: var(--accent-primary);
+}
+
+/* 按钮点击反馈效果 */
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* 按钮图标样式 */
+.btn__icon {
+  transition: transform 0.3s ease;
+}
+
+/* 学习按钮悬停状态下的图标样式 */
+.btn--learning:hover .btn__icon {
+  transform: scale(1.15) rotate(-5deg);
+}

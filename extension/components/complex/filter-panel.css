@@ -1,0 +1,539 @@
+/**
+ * Filter Panel Component Styles
+ * 筛选面板组件样式 - 极简高性能版本
+ * 注意：为避免GPU过载，此文件不使用任何backdrop-filter
+ */
+
+/* 遮罩层 - 纯色背景，无模糊 */
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  /* 使用will-change优化动画性能 */
+  will-change: opacity, visibility;
+}
+
+.filter-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease-out;
+}
+
+body.theme-dark .filter-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* 筛选面板 - 纯色背景，无模糊效果 */
+.filter-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 70vh;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  transform: translateY(100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* 使用will-change和GPU加速 */
+  will-change: transform;
+}
+
+.filter-panel.active {
+  transform: translateY(0);
+  transition: transform 0.25s ease-out;
+}
+
+body.theme-dark .filter-panel {
+  background: #1e293b;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 面板头部 - 简化样式 */
+.filter-header {
+  padding: 16px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  background: inherit;
+}
+
+.filter-header::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+body.theme-dark .filter-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-dark .filter-header::before {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+body.theme-dark .filter-title {
+  color: #f8fafc;
+}
+
+.filter-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.05);
+  color: #4a5568;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-dark .filter-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.filter-close-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: radial-gradient(160px 160px at 50% 50%, rgba(239, 68, 68, 0.25), transparent 60%);
+}
+
+.filter-close-btn:hover {
+  background: var(--filter-close-hover, rgba(239, 68, 68, 0.18));
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.filter-close-btn:hover::before { opacity: 1; }
+
+.filter-close-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  background: var(--filter-close-active-bg, rgba(239, 68, 68, 0.25));
+}
+
+.filter-close-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--filter-close-focus-ring, rgba(239, 68, 68, 0.5));
+}
+
+@media (hover: none) {
+  .filter-close-btn:hover::before { opacity: 0; }
+}
+
+/* 提高优先级，确保样式覆盖 */
+.filter-header .filter-close-btn:hover {
+  background: var(--filter-close-hover, rgba(239, 68, 68, 0.22));
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.7);
+}
+.filter-header .filter-close-btn:active {
+  background: var(--filter-close-active-bg, rgba(239, 68, 68, 0.30));
+  transform: scale(0.95);
+}
+/* 面板内容 */
+.filter-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* 筛选分组 */
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.theme-dark .filter-section-title {
+  color: #94a3b8;
+}
+
+/* 视图选择 */
+.filter-view-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.filter-view-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  color: #475569;
+}
+
+.filter-view-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+body.theme-dark .filter-view-btn {
+  background: #334155;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+body.theme-dark .filter-view-btn.active {
+  background: #a78bfa;
+  border-color: #a78bfa;
+}
+
+.filter-view-btn .icon-svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.filter-view-btn span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 排序选项 */
+.filter-sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-sort-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.filter-sort-item.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+body.theme-dark .filter-sort-item {
+  background: #334155;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .filter-sort-item.active {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: #a78bfa;
+}
+
+.filter-sort-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-sort-item.active .filter-sort-radio {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+
+.filter-sort-item.active .filter-sort-radio::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+body.theme-dark .filter-sort-item.active .filter-sort-radio {
+  border-color: #a78bfa;
+  background: #a78bfa;
+}
+
+.filter-sort-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+body.theme-dark .filter-sort-label {
+  color: #f8fafc;
+}
+
+/* 首字母筛选 - 超扁平错落布局 */
+.filter-letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.filter-letter-btn {
+  width: 36px;
+  height: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.filter-letter-btn:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.filter-letter-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.filter-letter-btn.all {
+  width: 50px;
+}
+
+body.theme-dark .filter-letter-btn {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #334155;
+  color: #e2e8f0;
+}
+
+body.theme-dark .filter-letter-btn:hover {
+  border-color: rgba(167, 139, 250, 0.2);
+}
+
+body.theme-dark .filter-letter-btn.active {
+  background: #a78bfa;
+  border-color: #a78bfa;
+  color: white;
+}
+
+/* 词性筛选 */
+.filter-pos-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-pos-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.filter-pos-item.active {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+}
+
+body.theme-dark .filter-pos-item {
+  background: #334155;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .filter-pos-item.active {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: #a78bfa;
+}
+
+.filter-pos-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-pos-item.active .filter-pos-checkbox {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.filter-pos-item.active .filter-pos-checkbox::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+body.theme-dark .filter-pos-item.active .filter-pos-checkbox {
+  background: #a78bfa;
+  border-color: #a78bfa;
+}
+
+.filter-pos-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+body.theme-dark .filter-pos-label {
+  color: #f8fafc;
+}
+
+/* 底部按钮 */
+.filter-actions {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 12px;
+  background: #fff;
+}
+
+body.theme-dark .filter-actions {
+  background: #1e293b;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.filter-reset-btn,
+.filter-apply-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.filter-reset-btn {
+  background: rgba(0, 0, 0, 0.05);
+  color: #4a5568;
+}
+
+body.theme-dark .filter-reset-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.filter-apply-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+body.theme-dark .filter-apply-btn {
+  background: #a78bfa;
+}
+
+.filter-reset-btn .icon-svg,
+.filter-apply-btn .icon-svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+/* 响应式 */
+@media (max-width: 520px) {
+  .filter-panel {
+    max-height: 85vh;
+  }
+
+  .filter-view-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-letters {
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .filter-letter-btn {
+    width: 32px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .filter-letter-btn.all {
+    width: 44px;
+  }
+}
+
+@media (max-width: 380px) {
+  .filter-letter-btn {
+    width: 30px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .filter-letter-btn.all {
+    width: 40px;
+  }
+}

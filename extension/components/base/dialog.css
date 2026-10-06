@@ -1,0 +1,329 @@
+/* 对话框遮罩样式 */
+.dialog-overlay {
+  position: fixed;                           /* 固定定位 */
+  top: 0;                                  /* 顶部对齐 */
+  left: 0;                                 /* 左侧对齐 */
+  right: 0;                                /* 右侧对齐 */
+  bottom: 0;                               /* 底部对齐 */
+  background: rgba(0, 0, 0, 0.5);        /* 半透明黑色背景 */
+  backdrop-filter: blur(5px);             /* 背景模糊效果 */
+  -webkit-backdrop-filter: blur(5px);     /* Safari兼容 */
+  z-index: 1000;                           /* 最高层级 */
+  display: flex;                           /* 弹性布局 */
+  align-items: center;                     /* 垂直居中对齐 */
+  justify-content: center;                 /* 水平居中对齐 */
+}
+
+/* 对话框基础样式 */
+.dialog {
+  background: rgba(255, 255, 255, 0.9);   /* 半透明白色背景 */
+  backdrop-filter: blur(20px);              /* 背景模糊效果 */
+  -webkit-backdrop-filter: blur(20px);    /* Safari兼容 */
+  border-radius: 20px;                     /* 圆角20px */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 半透明边框 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* 强烈阴影效果 */
+  min-width: 400px;                        /* 最小宽度400px */
+  max-width: 90vw;                         /* 最大宽度90%视口宽度 */
+  max-height: 80vh;                        /* 最大高度80%视口高度 */
+  overflow: hidden;                        /* 隐藏溢出内容 */
+}
+
+/* 翻译弹窗特殊样式 */
+.translation-dialog {
+  min-width: 600px;
+  max-width: 80vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* 翻译弹窗内容区域样式 */
+.translation-content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 翻译头部样式 */
+.translation-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* 翻译单词标题样式 */
+.translation-word {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* 音标样式 */
+.translation-phonetic {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* 对话框头部样式 */
+.dialog-header {
+  display: flex;                           /* 弹性布局 */
+  justify-content: space-between;          /* 两端对齐 */
+  align-items: center;                     /* 垂直居中对齐 */
+  padding: 20px;                          /* 内边距20px */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 底部边框 */
+}
+
+.dialog-header h3 {
+  margin: 0;                               /* 无外边距 */
+  color: #2c3e50;                          /* 深蓝色文字 */
+  font-size: 18px;                         /* 字体大小18px */
+  font-weight: 600;                        /* 字体粗细600 */
+}
+
+/* 对话框关闭按钮样式 */
+.dialog-close {
+  background: none;                        /* 无背景 */
+  border: none;                            /* 无边框 */
+  font-size: 24px;                         /* 字体大小24px */
+  color: #999;                             /* 灰色文字 */
+  cursor: pointer;                         /* 鼠标指针为手型 */
+  padding: 0;                              /* 无内边距 */
+  width: 30px;                             /* 宽度30px */
+  height: 30px;                            /* 高度30px */
+  display: flex;                           /* 弹性布局 */
+  align-items: center;                     /* 垂直居中对齐 */
+  justify-content: center;                 /* 水平居中对齐 */
+  border-radius: 50%;                      /* 圆形按钮 */
+  transition: all 0.3s ease;               /* 过渡动画 */
+}
+
+.dialog-close:hover {
+  background: rgba(0, 0, 0, 0.1);        /* 悬停时浅色背景 */
+  color: #666;                             /* 悬停时深灰色文字 */
+}
+
+/* 对话框内容样式 */
+.dialog-content {
+  padding: 20px;                           /* 内边距20px */
+  max-height: 400px;                       /* 最大高度400px */
+  overflow-y: auto;                        /* 垂直滚动 */
+}
+
+/* 对话框操作按钮区域样式 */
+.dialog-actions {
+  display: flex;                           /* 弹性布局 */
+  justify-content: flex-end;               /* 右对齐 */
+  gap: 15px;                               /* 按钮间距15px */
+  padding: 20px;                           /* 内边距20px */
+  border-top: 1px solid rgba(0, 0, 0, 0.1); /* 顶部边框 */
+}
+
+/* 翻译弹窗按钮区域样式 */
+.translation-dialog .dialog-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  justify-content: flex-end;
+  background: var(--bg-highlight);
+}
+
+/* 翻译弹窗按钮样式 */
+.translation-dialog .action-btn {
+  min-height: 40px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: all var(--transition-normal);
+}
+
+.translation-dialog .copy-btn:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.translation-dialog .share-btn:hover {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: var(--accent-success);
+}
+
+.translation-dialog .dialog-actions .action-btn:last-child:hover {
+  background: rgba(222, 100, 100, 0.1);
+  border-color: var(--accent-danger);
+}
+
+/* 确认按钮样式 */
+.confirm-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(40, 167, 69, 0.8);
+  color: white;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background: rgba(40, 167, 69, 0.95);
+  transform: translateY(-1px);
+}
+
+.confirm-btn:disabled {
+  background: rgba(108, 117, 125, 0.5);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: not-allowed;
+}
+
+/* 取消按钮样式 */
+.cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(108, 117, 125, 0.8);
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: rgba(108, 117, 125, 0.95);
+  transform: translateY(-1px);
+}
+
+/* 发音按钮样式 */
+.pronunciation-btn {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pronunciation-btn:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-primary);
+}
+
+/* 对话框加载状态样式 */
+.dialog-loading-state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  border-radius: 24px;
+}
+
+/* 对话框错误信息样式 */
+.dialog-error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  text-align: center;
+  max-width: 80%;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+  border-top: 3px solid var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 加载文本 */
+.loading-text {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* 错误图标 */
+.error-icon {
+  font-size: 48px;
+}
+
+/* 错误文本 */
+.error-text {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .translation-dialog {
+    min-width: 95vw;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+}
+
+/* 旋转动画 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 翻译弹窗动画效果 */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

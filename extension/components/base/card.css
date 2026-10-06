@@ -1,0 +1,295 @@
+/**
+ * Card组件样式
+ * 提供卡片的基础样式和变体样式
+ */
+
+/* 卡片基础样式 */
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 卡片伪元素背景效果 */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+/* 卡片悬停效果 */
+.card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+/* 卡片悬停时的伪元素效果 */
+.card:hover::before {
+  opacity: 1;
+}
+
+/* 卡片激活效果 */
+.card:active {
+  transform: translateY(-2px);
+  transition: transform 0.1s ease;
+}
+
+/* 卡片变体样式 - 带阴影的卡片 */
+.card--elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+/* 卡片变体样式 - 带边框的卡片 */
+.card--outlined {
+  background: transparent;
+  box-shadow: none;
+  border: 2px solid var(--border-color);
+}
+
+/* 卡片变体样式 - 毛玻璃效果 */
+.card--glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 卡片变体样式 - 紧凑卡片 */
+.card--compact {
+  padding: 16px;
+  border-radius: 16px;
+}
+
+/* 卡片变体样式 - 超大卡片 */
+.card--large {
+  padding: 32px;
+  border-radius: 32px;
+}
+
+/* 卡片图标样式 */
+.card__icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+/* 卡片悬停时的图标效果 */
+.card:hover .card__icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* 卡片标题样式 */
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 卡片内容样式 */
+.card__content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+  line-height: 1.5;
+}
+
+/* 卡片底部样式 */
+.card__footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* 卡片变体 - 单词卡片 */
+.card--word {
+  background: var(--bg-word-card);
+  border-radius: 20px;
+}
+
+/* 单词卡片悬停效果 */
+.card--word:hover {
+  background: var(--bg-word-card-hover);
+}
+
+/* 单词卡片边框容器 */
+.card__border {
+  position: absolute;
+  inset: 0;
+  padding: 6px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* 流体边框动画层 */
+.card__border::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--fluid-border-gradient);
+  animation: borderRotate 4s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 流体边框脉冲效果 */
+.card__border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--fluid-border-gradient);
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: borderPulse 3s ease-in-out infinite;
+}
+
+/* 单词卡片悬停时的边框效果 */
+.card--word:hover .card__border::before,
+.card--word:hover .card__border::after {
+  opacity: 0.8;
+}
+
+/* 统计卡片变体 */
+.card--stat {
+  /* 统计卡片样式将在复杂组件中实现 */
+}
+
+/* 首页卡片样式别名，保持兼容性 */
+.home-card {
+  /* 复制基础卡片样式 */
+  background: var(--bg-card);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 首页卡片伪元素背景效果 */
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+/* 首页卡片悬停效果 */
+.home-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+/* 首页卡片悬停时的伪元素效果 */
+.home-card:hover::before {
+  opacity: 1;
+}
+
+/* 首页卡片激活效果 */
+.home-card:active {
+  transform: translateY(-2px);
+  transition: transform 0.1s ease;
+}
+
+/* 卡片图标样式别名，保持兼容性 */
+.card-icon {
+  /* 复制卡片图标样式 */
+  font-size: 48px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+/* 首页卡片悬停时的图标效果 */
+.home-card:hover .card-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* 卡片标题样式别名，保持兼容性 */
+.card-title {
+  /* 复制卡片标题样式 */
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 卡片计数样式别名，保持兼容性 */
+.card-count {
+  /* 复制卡片计数样式 */
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* 首页卡片悬停时的计数效果 */
+.home-card:hover .card-count {
+  transform: scale(1.1);
+}

@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "单词翻译助手",
+  "version": "2.1.0",
+  "description": "高性能翻译助手 - 优化版",
+  
+  "minimum_chrome_version": "88",
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  
+  "optional_permissions": [
+    "webNavigation"
+  ],
+
+  "host_permissions": [
+    "<all_urls>",
+    "https://api.groq.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "extension/content/content-bundle.js"
+      ],
+      "css": [
+        "extension/content/content-bundle.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false,
+      "world": "ISOLATED"
+    }
+  ],
+
+  "action": {
+    "default_popup": "extension/popup/popup.html"
+  },
+
+  "background": {
+    "service_worker": "extension/background/background.js"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+
+  "icons": {
+    "16": "assets/icons/icon16.png"
+  }
+}

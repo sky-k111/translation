@@ -1,0 +1,494 @@
+/**
+ * Search Bar组件样式
+ * 提供搜索栏的样式，包含渐变旋转边框动效
+ */
+
+/* 搜索栏容器 */
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 带动效的搜索栏容器 */
+.search-bar--animated {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 动效层 - 基础样式 */
+.search-bar__effect-layer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  z-index: -1;
+  border-radius: 10px;
+}
+
+/* 发光层 */
+.search-bar__glow {
+  filter: blur(30px);
+  opacity: 0.4;
+  max-height: 130px;
+  max-width: 354px;
+}
+
+.search-bar__glow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(60deg);
+  width: 999px;
+  height: 999px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-image: conic-gradient(
+    var(--search-bar-glow-start, #000),
+    var(--search-bar-glow-color-1, #2563eb) 5%,
+    var(--search-bar-glow-start, #000) 38%,
+    var(--search-bar-glow-start, #000) 50%,
+    var(--search-bar-glow-color-2, #06b6d4) 60%,
+    var(--search-bar-glow-start, #000) 87%
+  );
+  animation: search-bar-rotate 4s 0.3s linear infinite;
+  transition: all 2s;
+}
+
+/* 深色边框背景层 */
+.search-bar__dark-border-bg {
+  max-height: 65px;
+  max-width: 312px;
+}
+
+.search-bar__dark-border-bg::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(82deg);
+  width: 600px;
+  height: 600px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-image: conic-gradient(
+    rgba(0, 0, 0, 0),
+    var(--search-bar-dark-bg-color-1, #18116a),
+    rgba(0, 0, 0, 0) 10%,
+    rgba(0, 0, 0, 0) 50%,
+    var(--search-bar-dark-bg-color-2, #1e3a8a),
+    rgba(0, 0, 0, 0) 60%
+  );
+  transition: all 2s;
+}
+
+/* 白色层 */
+.search-bar__white {
+  max-height: 63px;
+  max-width: 307px;
+  border-radius: 10px;
+  filter: blur(2px);
+}
+
+.search-bar__white::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(83deg);
+  width: 600px;
+  height: 600px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  filter: brightness(1.4);
+  background-image: conic-gradient(
+    rgba(0, 0, 0, 0) 0%,
+    var(--search-bar-white-color-1, #93c5fd),
+    rgba(0, 0, 0, 0) 8%,
+    rgba(0, 0, 0, 0) 50%,
+    var(--search-bar-white-color-2, #67e8f9),
+    rgba(0, 0, 0, 0) 58%
+  );
+  animation: search-bar-rotate 4s linear infinite;
+  transition: all 2s;
+}
+
+/* 边框层 */
+.search-bar__border {
+  max-height: 59px;
+  max-width: 303px;
+  border-radius: 11px;
+  filter: blur(0.5px);
+}
+
+.search-bar__border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(70deg);
+  width: 600px;
+  height: 600px;
+  filter: brightness(1.3);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-image: conic-gradient(
+    var(--search-bar-border-bg, #1c191c),
+    var(--search-bar-border-color-1, #402fb5) 5%,
+    var(--search-bar-border-bg, #1c191c) 14%,
+    var(--search-bar-border-bg, #1c191c) 50%,
+    var(--search-bar-border-color-2, #cf30aa) 60%,
+    var(--search-bar-border-bg, #1c191c) 64%
+  );
+  animation: search-bar-rotate 4s 0.1s linear infinite;
+  transition: all 2s;
+}
+
+/* 主容器 */
+.search-bar__main {
+  position: relative;
+}
+
+/* 输入框 */
+.search-bar__input {
+  background-color: var(--search-bar-bg, #010201);
+  border: none;
+  width: 100%;
+  height: 56px;
+  border-radius: 10px;
+  color: white;
+  padding-inline: 59px;
+  font-size: 18px;
+  outline: none;
+  box-shadow: none;
+}
+
+.search-bar__input:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+.search-bar__input::placeholder {
+  color: var(--search-bar-placeholder-color, #c0b9c0);
+}
+
+/* 搜索图标 */
+.search-bar__search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-bar__search-icon svg {
+  stroke: var(--search-bar-icon-color, #b6a9b7);
+}
+
+/* 输入遮罩（渐变效果） */
+.search-bar__input-mask {
+  pointer-events: none;
+  width: 100px;
+  height: 20px;
+  position: absolute;
+  background: linear-gradient(90deg, transparent, black);
+  top: 18px;
+  left: 70px;
+}
+
+/* 粉色遮罩 */
+.search-bar__pink-mask {
+  pointer-events: none;
+  width: 30px;
+  height: 20px;
+  position: absolute;
+  background: var(--search-bar-pink-color, #cf30aa);
+  top: 10px;
+  left: 5px;
+  filter: blur(20px);
+  opacity: 0.8;
+  animation: search-bar-leftright 4s ease-in infinite;
+  transition: all 2s;
+}
+
+/* Hover 状态 */
+.search-bar--animated:hover .search-bar__pink-mask {
+  animation: search-bar-rotate 4s linear infinite;
+  opacity: 0;
+}
+
+.search-bar--animated:hover .search-bar__dark-border-bg::before {
+  transform: translate(-50%, -50%) rotate(262deg);
+}
+
+.search-bar--animated:hover .search-bar__glow::before {
+  transform: translate(-50%, -50%) rotate(240deg);
+}
+
+.search-bar--animated:hover .search-bar__white::before {
+  transform: translate(-50%, -50%) rotate(263deg);
+}
+
+.search-bar--animated:hover .search-bar__border::before {
+  transform: translate(-50%, -50%) rotate(250deg);
+}
+
+/* Focus 状态 - 已禁用所有紫色动效 */
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__effect-layer {
+  background: none !important;
+  background-image: none !important;
+  filter: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__effect-layer::before {
+  background: none !important;
+  background-image: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__input-mask {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__pink-mask {
+  background: none !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__filter-border {
+  background: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.search-bar--animated:has(.search-bar__input:focus) .search-bar__filter-border::before {
+  background: none !important;
+  background-image: none !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* 旋转动画 */
+@keyframes search-bar-rotate {
+  100% {
+    transform: translate(-50%, -50%) rotate(450deg);
+  }
+}
+
+/* 左右移动动画 */
+@keyframes search-bar-leftright {
+  0% {
+    transform: translate(0px, 0px);
+    opacity: 1;
+  }
+
+  49% {
+    transform: translate(250px, 0px);
+    opacity: 0;
+  }
+
+  80% {
+    transform: translate(-40px, 0px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+    opacity: 1;
+  }
+}
+
+/* 过滤图标容器 */
+.search-bar__filter-icon-container {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  max-height: 40px;
+  max-width: 38px;
+  height: 100%;
+  width: 100%;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--search-bar-filter-bg-1, #161329), var(--search-bar-filter-bg-2, black), var(--search-bar-filter-bg-3, #1d1b4b));
+  border: 1px solid transparent;
+  outline: none;
+  box-shadow: none;
+}
+
+.search-bar__filter-icon-container:focus {
+  outline: none;
+  box-shadow: none;
+  border: 1px solid transparent;
+}
+
+/* 过滤图标边框 */
+.search-bar__filter-border {
+  height: 42px;
+  width: 40px;
+  position: absolute;
+  overflow: hidden;
+  top: 7px;
+  right: 7px;
+  border-radius: 10px;
+}
+
+.search-bar__filter-border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  width: 600px;
+  height: 600px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  filter: brightness(1.35);
+  background-image: conic-gradient(
+    rgba(0, 0, 0, 0),
+    var(--search-bar-filter-border-color, #3d3a4f),
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0) 50%,
+    var(--search-bar-filter-border-color, #3d3a4f),
+    rgba(0, 0, 0, 0) 100%
+  );
+  transition: all 2s;
+  animation: search-bar-rotate 4s linear infinite;
+}
+
+/* 原有的搜索栏样式（保持兼容性） */
+.search-bar-input-container {
+  flex: 1;
+  position: relative;
+}
+
+.search-bar-input {
+  width: 100%;
+}
+
+.search-bar-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-bar-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: '2';
+  background: 'none';
+  border: 'none';
+  color: 'var(--text-secondary)';
+  cursor: 'pointer';
+  padding: '4px';
+  border-radius: 'var(--border-radius-sm)';
+  transition: 'all 0.2s ease';
+  font-size: 'var(--font-size-lg)';
+}
+
+.search-bar-clear-btn:hover {
+  background: 'var(--bg-hover)';
+  color: 'var(--text-primary)';
+}
+
+.search-bar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: 'var(--bg-primary)';
+  border: '1px solid var(--border-color)';
+  border-radius: 'var(--border-radius-md)';
+  box-shadow: 'var(--shadow-lg)';
+  margin-top: '4px';
+  z-index: '100';
+  max-height: '300px';
+  overflow-y: 'auto';
+  opacity: '0';
+  visibility: 'hidden';
+  transition: 'all 0.2s ease';
+}
+
+.search-bar-dropdown.visible {
+  opacity: '1';
+  visibility: 'visible';
+}
+
+.search-bar-section {
+  padding: '8px 0';
+}
+
+.search-bar-section-title {
+  font-size: 'var(--font-size-xs)';
+  font-weight: 'var(--font-weight-bold)';
+  color: 'var(--text-tertiary)';
+  padding: '4px 12px';
+  margin: '0';
+  text-transform: 'uppercase';
+  letter-spacing: '0.5px';
+}
+
+.search-bar-item {
+  display: 'flex';
+  align-items: 'center';
+  padding: '8px 12px';
+  cursor: 'pointer';
+  transition: 'all 0.2s ease';
+  gap: '8px';
+}
+
+.search-bar-item:hover {
+  background: 'var(--bg-hover)';
+}
+
+.search-bar-item-icon {
+  font-size: 'var(--font-size-sm)';
+  color: 'var(--text-secondary)';
+  flex-shrink: '0';
+}
+
+.search-bar-item-text {
+  font-size: 'var(--font-size-md)';
+  color: 'var(--text-primary)';
+  flex: '1';
+}
+
+.search-bar-item-highlight {
+  font-weight: 'var(--font-weight-bold)';
+  color: 'var(--accent-primary)';
+}
+
+.search-bar-divider {
+  height: '1px';
+  background: 'var(--border-color)';
+  margin: '4px 0';
+}
+
+.search-bar-empty {
+  padding: '16px';
+  text-align: 'center';
+  color: 'var(--text-secondary)';
+  font-size: 'var(--font-size-sm)';
+}

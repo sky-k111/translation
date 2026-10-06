@@ -1,0 +1,319 @@
+/* ==================== */
+/* 流光进度条样式 */
+/* ==================== */
+
+/* 进度条容器 */
+.stream-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.stream-progress-bar.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 进度轨道 */
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 进度条主体 - 流光效果 */
+.progress-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(102, 126, 234, 0.9) 20%,
+    rgba(118, 75, 162, 0.9) 50%,
+    rgba(240, 147, 251, 0.9) 80%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.6);
+  animation: progressSlide 0.8s ease-in-out infinite, hueCycle 1.5s linear infinite;
+}
+
+/* 进度条发光拖尾 */
+.progress-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(102, 126, 234, 0.6) 50%,
+    transparent 100%
+  );
+  filter: blur(12px);
+  animation: glowFade 0.8s ease-in-out infinite;
+  opacity: 1;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+}
+
+/* 滑动动画 */
+@keyframes progressSlide {
+  0% {
+    left: -80%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 色彩循环动画 */
+@keyframes hueCycle {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* 拖尾淡出动画 */
+@keyframes glowFade {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.2);
+  }
+}
+
+/* 深色主题下的流光进度条样式 */
+body.theme-dark .progress-glow {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(167, 139, 250, 0.9) 20%,
+    rgba(96, 165, 250, 0.9) 50%,
+    rgba(34, 211, 238, 0.9) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.6);
+}
+
+body.theme-dark .progress-glow::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(167, 139, 250, 0.6) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+}
+
+/* ==================== */
+/* 页面切换样式 */
+/* ==================== */
+
+/**
+ * 页面基础样式
+ * 所有页面默认隐藏，垂直布局
+ */
+.page {
+  display: none;                      /* 默认隐藏所有页面 */
+  flex-direction: column;             /* 子元素垂直排列 */
+  height: 100%;                      /* 页面高度占满容器 */
+}
+
+/**
+ * 激活页面样式
+ * 当前显示的页面设置为弹性布局
+ */
+.page.active {
+  display: flex;                      /* 激活页面显示为弹性容器 */
+}
+
+/* ==================== */
+/* 流体边框动画 */
+/* ==================== */
+
+/* 流体边框动画关键帧 */
+@keyframes liquidFlow1 {
+  0%, 100% {
+    --liquid-angle-1: 0deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 0;
+  }
+  25% {
+    --liquid-angle-1: 90deg;
+    --liquid-scale: 110%;
+    --liquid-hue-1: 60;
+  }
+  50% {
+    --liquid-angle-1: 180deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 180;
+  }
+  75% {
+    --liquid-angle-1: 270deg;
+    --liquid-scale: 95%;
+    --liquid-hue-1: 240;
+  }
+}
+
+@keyframes liquidFlow2 {
+  0%, 100% {
+    --liquid-angle-2: 120deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 180;
+  }
+  25% {
+    --liquid-angle-2: 210deg;
+    --liquid-scale: 105%;
+    --liquid-hue-2: 240;
+  }
+  50% {
+    --liquid-angle-2: 300deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 300;
+  }
+  75% {
+    --liquid-angle-2: 30deg;
+    --liquid-scale: 98%;
+    --liquid-hue-2: 360;
+  }
+}
+
+@keyframes liquidPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+/* 流体边框层 - 基础样式 */
+.liquid-border-layer {
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: transparent;
+  z-index: 0;
+  pointer-events: none;
+  animation: liquidPulse 3s ease-in-out infinite;
+}
+
+/* 流体渐变层1 - 主流动层 */
+.liquid-border-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: conic-gradient(
+    from var(--liquid-angle-1) in oklch,
+    transparent 0%,
+    hsl(calc(var(--liquid-hue-1) + 0), 85%, 65%) 15%,
+    hsl(calc(var(--liquid-hue-1) + 60), 80%, 60%) 30%,
+    transparent 50%,
+    hsl(calc(var(--liquid-hue-1) + 180), 85%, 65%) 65%,
+    hsl(calc(var(--liquid-hue-1) + 240), 80%, 60%) 80%,
+    transparent 100%
+  );
+  animation: liquidFlow1 4s ease-in-out infinite;
+  filter: blur(8px);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  padding: 2px;
+}
+
+/* 流体渐变层2 - 交织层 */
+.liquid-border-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: conic-gradient(
+    from var(--liquid-angle-2) in oklch,
+    transparent 0%,
+    hsl(calc(var(--liquid-hue-2) + 30), 90%, 70%) 20%,
+    hsl(calc(var(--liquid-hue-2) + 90), 85%, 65%) 40%,
+    transparent 60%,
+    hsl(calc(var(--liquid-hue-2) + 210), 90%, 70%) 75%,
+    hsl(calc(var(--liquid-hue-2) + 270), 85%, 65%) 90%,
+    transparent 100%
+  );
+  animation: liquidFlow2 5s ease-in-out infinite reverse;
+  filter: blur(6px);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  padding: 2px;
+}
+
+/* ==================== */
+/* 通用动画 */
+/* ==================== */
+
+/* 旋转动画 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 淡入动画 */
+@keyframes containerFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 边框旋转动画 */
+@keyframes borderRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 边框脉冲动画 */
+@keyframes borderPulse {
+  0%, 100% { opacity: 0.15; filter: blur(8px); }
+  50% { opacity: 0.25; filter: blur(12px); }
+}
+
+/* 单词项滑入动画 */
+@keyframes wordItemSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    box-shadow: var(--shadow-sm);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: var(--shadow-md);
+  }
+}

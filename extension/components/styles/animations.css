@@ -1,0 +1,488 @@
+/**
+ * Animations组件样式
+ * 集中管理所有动画效果
+ * 包含所有@keyframes定义
+ */
+
+/* ==================== */
+/* Splash屏幕动画 */
+/* ==================== */
+
+/* 波浪动画 */
+@keyframes waveAnimation {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-20px) scale(1.05);
+  }
+}
+
+/* 黑洞形成动画 */
+@keyframes blackholeForm {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+/* 黑洞外环脉动动画 */
+@keyframes blackholeOuterPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.7;
+  }
+}
+
+/* 黑洞光晕动画 */
+@keyframes blackholeGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(102, 126, 234, 0.4),
+      0 0 50px rgba(102, 126, 234, 0.3),
+      0 0 70px rgba(102, 126, 234, 0.2),
+      inset 0 0 30px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px rgba(102, 126, 234, 0.6),
+      0 0 60px rgba(102, 126, 234, 0.5),
+      0 0 90px rgba(102, 126, 234, 0.4),
+      inset 0 0 40px rgba(102, 126, 234, 0.5);
+  }
+}
+
+/* 流动渐变动画 */
+@keyframes flowingGradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 100%;
+  }
+}
+
+/* 粒子爆炸动画 */
+@keyframes particleExplosion {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* 光效脉动动画 */
+@keyframes lightPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* 光环扩展动画 */
+@keyframes ringExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Splash淡入动画 */
+@keyframes splashFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 字母淡入动画 */
+@keyframes letterFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotateX(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+/* 旋转动画 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Splash淡出动画 */
+@keyframes splashFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+/* 容器淡入动画 */
+@keyframes containerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 渐变移动动画 */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ==================== */
+/* 流体边框动画 */
+/* ==================== */
+
+/* 流体流动动画1 */
+@keyframes liquidFlow1 {
+  0%, 100% {
+    --liquid-angle-1: 0deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 0;
+  }
+  25% {
+    --liquid-angle-1: 90deg;
+    --liquid-scale: 110%;
+    --liquid-hue-1: 60;
+  }
+  50% {
+    --liquid-angle-1: 180deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 180;
+  }
+  75% {
+    --liquid-angle-1: 270deg;
+    --liquid-scale: 95%;
+    --liquid-hue-1: 240;
+  }
+}
+
+/* 流体流动动画2 */
+@keyframes liquidFlow2 {
+  0%, 100% {
+    --liquid-angle-2: 120deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 180;
+  }
+  25% {
+    --liquid-angle-2: 210deg;
+    --liquid-scale: 105%;
+    --liquid-hue-2: 240;
+  }
+  50% {
+    --liquid-angle-2: 300deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 300;
+  }
+  75% {
+    --liquid-angle-2: 30deg;
+    --liquid-scale: 98%;
+    --liquid-hue-2: 360;
+  }
+}
+
+/* 流体脉动动画 */
+@keyframes liquidPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+/* ==================== */
+/* 边框和装饰动画 */
+/* ==================== */
+
+/* 边框旋转动画 */
+@keyframes borderRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 边框脉动动画 */
+@keyframes borderPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ==================== */
+/* 列表和项目动画 */
+/* ==================== */
+
+/* 单词项滑入动画 */
+@keyframes wordItemSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 淡入上移动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 淡出下移动画 */
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 缩放淡入动画 */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==================== */
+/* 定义和详情动画 */
+/* ==================== */
+
+/* 定义淡入动画 */
+@keyframes definitionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+}
+
+/* 定义脉动动画 */
+@keyframes definitionPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* 定义装饰脉动动画 */
+@keyframes definitionDecorPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ==================== */
+/* 加载和旋转动画 */
+/* ==================== */
+
+/* 加载淡入动画 */
+@keyframes loadingFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 加载器脉动动画 */
+@keyframes spinnerPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* 加载文本脉动动画 */
+@keyframes loadingTextPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ==================== */
+/* 星标和图标动画 */
+/* ==================== */
+
+/* 星标脉动动画 */
+@keyframes starPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* 星标旋转动画 */
+@keyframes starSpin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.2);
+  }
+}
+
+/* ==================== */
+/* 卡片和面板动画 */
+/* ==================== */
+
+/* 卡片淡入动画 */
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滑入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滑入淡入动画 */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滑下动画 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

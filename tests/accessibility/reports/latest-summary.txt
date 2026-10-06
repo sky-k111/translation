@@ -1,0 +1,17 @@
+
+Lighthouse Accessibility Audit Summary
+======================================
+
+Date: 2/2/2026, 9:04:39 PM
+Score: 100.0 / 100 🟢
+Target: 95
+
+Results:
+- Passed: 12 audits
+- Failed: 0 audits
+- Not Applicable: 61 audits
+
+Failed Audits:
+
+
+Full report: /Users/justin/Downloads/TIMS-project-main/tests/accessibility/reports/lighthouse-2026-02-02_21-04-13.html

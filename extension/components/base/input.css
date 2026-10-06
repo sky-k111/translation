@@ -1,0 +1,228 @@
+/* 输入框和选择器基础样式 */
+/* 统一高度和视觉风格，更紧凑的设计 */
+.type-filter,
+.sort-select {
+  flex: 1;
+  min-width: 120px;
+  height: 30px;                          /* 减小高度 */
+  padding: 0 10px;                      /* 减小内边距 */
+  border: 1px solid var(--border-color); /* 默认细边框 */
+  border-radius: 8px;                    /* 更小的圆角 */
+  font-size: 13px;                      /* 减小字体 */
+  outline: none;
+  transition: all var(--transition-normal);
+  background: var(--bg-input);
+  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  box-shadow: none;                      /* 移除默认阴影，扁平化 */
+  font-weight: 500;
+}
+
+/* 搜索框特殊样式 - 突出显示 */
+.search-input {
+  width: 100%;
+  height: 42px;                         /* 增加高度，突出显示 */
+  padding: 0 16px 0 44px;                /* 优化内边距 */
+  border: 1px solid var(--border-color); /* 默认细边框 */
+  border-radius: 12px;                   /* 更大的圆角，更现代 */
+  font-size: 15px;                      /* 增大字体 */
+  outline: none;
+  transition: all var(--transition-normal);
+  background: var(--bg-input);
+  backdrop-filter: blur(10px);           /* 适度模糊 */
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);          /* 轻微阴影，增加层次感 */
+  font-weight: 500;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+  background-position: 12px center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;            /* 增大图标大小 */
+}
+
+/* 输入框聚焦效果 */
+.search-input:focus,
+.type-filter:focus,
+.sort-select:focus {
+  background: var(--bg-input-focus);
+  transform: translateY(-1px);
+}
+
+/* 搜索框聚焦时增强效果 */
+.search-input:focus {
+  transform: translateY(-1px);
+}
+
+/* 选择器特殊样式 */
+.type-filter,
+.sort-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 14px 14px;            /* 减小图标大小 */
+  padding-right: 28px;                   /* 减小右侧内边距 */
+}
+
+/* 设置页面输入框样式 */
+.setting-item input[type="text"],
+.setting-item input[type="password"],
+.setting-item input[type="number"],
+.setting-item select {
+  flex: 1;                                 /* 占据剩余空间 */
+  padding: 10px 15px;                      /* 内边距10px 15px */
+  background: var(--bg-input);             /* 使用CSS变量设置背景 */
+  border: 1px solid var(--border-color);   /* 使用CSS变量设置边框 */
+  border-radius: 8px;                     /* 圆角8px */
+  font-size: 14px;                        /* 字体大小14px */
+  color: var(--text-primary);              /* 使用CSS变量设置文字颜色 */
+}
+
+/* 颜色选择器样式 */
+.color-item input[type="color"] {
+  width: 40px;                             /* 宽度40px */
+  height: 30px;                            /* 高度30px */
+  border: none;                            /* 无边框 */
+  border-radius: 6px;                      /* 圆角6px */
+  cursor: pointer;                         /* 鼠标指针为手型 */
+}
+
+/* 可访问性增强样式 */
+/* 改进输入框可访问性 */
+input {
+  min-height: 44px;
+  padding: 8px 16px;
+}
+
+/* 文件输入样式 */
+.file-input {
+  display: none;                           /* 隐藏原文件输入 */
+}
+
+.file-label {
+  display: inline-block;                   /* 行内块级元素 */
+  padding: 12px 20px;
+  background: rgba(74, 144, 226, 0.8);
+  color: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.file-label:hover {
+  background: rgba(74, 144, 226, 0.95);
+  transform: translateY(-1px);
+}
+
+/* 流体边框层 - 基础样式 */
+.liquid-border-layer {
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: transparent;
+  z-index: 0;
+  pointer-events: none;
+  animation: liquidPulse 3s ease-in-out infinite;
+  opacity: 0; /* 完全隐藏外边框 */
+}
+
+/* 流体渐变层1 - 主流动层 */
+.liquid-border-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: conic-gradient(
+    from var(--liquid-angle-1) in oklch,
+    transparent 0%,
+    transparent 100% /* 完全透明，消除颜色 */
+  );
+  animation: liquidFlow1 4s ease-in-out infinite;
+  filter: blur(8px);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  padding: 2px;
+}
+
+/* 流体渐变层2 - 交织层 */
+.liquid-border-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: conic-gradient(
+    from var(--liquid-angle-2) in oklch,
+    transparent 0%,
+    transparent 100% /* 完全透明，消除颜色 */
+  );
+  animation: liquidFlow2 5s ease-in-out infinite reverse;
+  filter: blur(6px);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  padding: 2px;
+}
+
+/* 流体边框动画 */
+@keyframes liquidFlow1 {
+  0%, 100% {
+    --liquid-angle-1: 0deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 0;
+  }
+  25% {
+    --liquid-angle-1: 90deg;
+    --liquid-scale: 110%;
+    --liquid-hue-1: 60;
+  }
+  50% {
+    --liquid-angle-1: 180deg;
+    --liquid-scale: 100%;
+    --liquid-hue-1: 180;
+  }
+  75% {
+    --liquid-angle-1: 270deg;
+    --liquid-scale: 95%;
+    --liquid-hue-1: 240;
+  }
+}
+
+@keyframes liquidFlow2 {
+  0%, 100% {
+    --liquid-angle-2: 120deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 180;
+  }
+  25% {
+    --liquid-angle-2: 210deg;
+    --liquid-scale: 105%;
+    --liquid-hue-2: 240;
+  }
+  50% {
+    --liquid-angle-2: 300deg;
+    --liquid-scale: 100%;
+    --liquid-hue-2: 300;
+  }
+  75% {
+    --liquid-angle-2: 30deg;
+    --liquid-scale: 98%;
+    --liquid-hue-2: 360;
+  }
+}
+
+@keyframes liquidPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}

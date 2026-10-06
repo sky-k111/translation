@@ -1,0 +1,19 @@
+/**
+ * Settings Panel组件样式
+ * 提供设置面板的样式
+ */
+
+/* 设置面板基础样式 */
+.settings-panel {
+  /* 设置面板基础样式将在这里实现 */
+}
+
+/* 设置项样式 */
+.settings-panel__item {
+  /* 设置项样式 */
+}
+
+/* 设置组样式 */
+.settings-panel__group {
+  /* 设置组样式 */
+}

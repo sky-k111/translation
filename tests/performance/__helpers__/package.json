@@ -1,0 +1,17 @@
+{
+  "name": "data-structure-benchmarks",
+  "version": "1.0.0",
+  "description": "Performance benchmarks for data structure optimization",
+  "type": "module",
+  "scripts": {
+    "bench": "node run-benchmarks.js",
+    "bench:word-index": "node run-benchmarks.js --suite=word-index",
+    "bench:review-queue": "node run-benchmarks.js --suite=review-queue",
+    "bench:pos-index": "node run-benchmarks.js --suite=pos-index",
+    "bench:save": "node run-benchmarks.js --output=results/benchmark-$(date +%Y%m%d-%H%M%S).json",
+    "bench:quick": "node run-benchmarks.js --iterations=10"
+  },
+  "keywords": ["benchmark", "performance", "data-structures"],
+  "author": "",
+  "license": "MIT"
+}

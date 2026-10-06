@@ -1,0 +1,16 @@
+/.claude
+/.kiro
+/.trae
+/.vscode
+/Dashboard重构计划.md
+/后端商业化规划方案.md
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+build/
+
+# IDE
+.DS_Store
