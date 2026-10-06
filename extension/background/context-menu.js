@@ -22,14 +22,33 @@ function registerTranslationContextMenu() {
 
 chrome.runtime.onStartup.addListener(registerTranslationContextMenu);
 
+async function ensureTranslationPage(tabId, frameId) {
+  const manifest = chrome.runtime.getManifest();
+  const ping = () => chrome.tabs.sendMessage(tabId, { type: 'PING_TRANSLATION' }, { frameId });
+  try {
+    const status = await ping();
+    if (status?.ready && status.version === manifest.version) return;
+  } catch { /* An already-open page may not have a live content script after an extension update. */ }
+  const target = { tabId, frameIds: [frameId] };
+  const scripts = manifest.content_scripts[0];
+  await chrome.scripting.insertCSS({ target, files: scripts.css });
+  await chrome.scripting.executeScript({ target, files: scripts.js });
+  const status = await ping();
+  if (!status?.ready || status.version !== manifest.version) {
+    throw new Error('网页翻译脚本未成功加载，请刷新网页后重试');
+  }
+}
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== TRANSLATION_MENU_ID || !info.selectionText?.trim() || tab?.id == null) return;
   try {
+    const frameId = info.frameId ?? 0;
+    await ensureTranslationPage(tab.id, frameId);
     const response = await chrome.tabs.sendMessage(tab.id, {
       type: 'TRANSLATE_SELECTION',
       text: info.selectionText
-    }, { frameId: info.frameId ?? 0 });
-    if (!response?.ok) throw new Error('Content script not ready');
+    }, { frameId });
+    if (!response?.ok) throw new Error(response?.error || '网页未完成翻译，请刷新后重试');
     await chrome.action.setBadgeText({ tabId: tab.id, text: '' });
     await chrome.action.setTitle({ tabId: tab.id, title: '单词翻译助手' });
   } catch (error) {
@@ -37,7 +56,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await chrome.action.setBadgeText({ tabId: tab.id, text: '!' });
     await chrome.action.setTitle({
       tabId: tab.id,
-      title: '翻译助手未连接到网页：请刷新网页后重试，并检查插件的网站访问权限。'
+      title: '翻译失败：' + error.message + '。请刷新网页，并检查插件的网站访问权限。'
     });
   }
 });

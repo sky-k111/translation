@@ -1,3 +1,7 @@
+(() => {
+const scriptVersion = '2.1.5';
+if (window.__TRANSLATION_ASSISTANT_READY?.version === scriptVersion &&
+    window.__TRANSLATION_ASSISTANT_READY.extensionId === chrome.runtime.id) return;
 /**
  * Trie树实现 - 用于单词搜索索引
  */
@@ -2702,6 +2706,46 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
     console.warn('Trusted Types policy creation failed:', e);
   }
 }
+
+// ====================
+// 内存安全的事件监听器管理器 (防止内存泄漏)
+// ====================
+const EventListenerManager = {
+  activeListeners: new Map(),
+
+  add(element, event, handler, options = {}) {
+    const listenerId = `${event}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    element.addEventListener(event, handler, options);
+    this.activeListeners.set(listenerId, { element, event, handler, options });
+    return listenerId;
+  },
+
+  remove(listenerId) {
+    const listener = this.activeListeners.get(listenerId);
+    if (listener) {
+      listener.element.removeEventListener(listener.event, listener.handler, listener.options);
+      this.activeListeners.delete(listenerId);
+    }
+  },
+
+  removeByElement(element) {
+    this.activeListeners.forEach((listener, id) => {
+      if (listener.element === element) this.remove(id);
+    });
+  },
+
+  cleanup() {
+    this.activeListeners.forEach((listener, id) => {
+      listener.element.removeEventListener(listener.event, listener.handler, listener.options);
+    });
+    this.activeListeners.clear();
+    console.log('✅ Event listeners cleaned up');
+  },
+
+  getCount() { return this.activeListeners.size; }
+};
+
+window.addEventListener('beforeunload', () => EventListenerManager.cleanup());
 
 // ====================  
 // 配置常量定义  
@@ -5704,14 +5748,19 @@ document.addEventListener('click', async (e) => {
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === 'PING_TRANSLATION' && sender.id === chrome.runtime.id) {
+    sendResponse({ ready: isExtensionContextValid(), version: scriptVersion });
+    return;
+  }
   if (msg?.type === 'TRANSLATE_SELECTION' && sender.id === chrome.runtime.id) {
     if (!isDomainAllowed() || typeof msg.text !== 'string' || !msg.text.trim()) {
       sendResponse({ ok: false });
       return;
     }
-    sendResponse({ ok: true });
-    executeTranslation(msg.text).catch(error => console.error('Selection translation failed:', error));
-    return;
+    executeTranslation(msg.text)
+      .then(() => sendResponse({ ok: true }))
+      .catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   if (msg && msg.type === 'REHIGHLIGHT') {
     chrome.storage.local.get(['translatedWords']).then(result => {
@@ -6002,3 +6051,6 @@ if (isDomainAllowed()) {
 // ==================== 
 // 加载状态UI管理 
 // ====================
+
+window.__TRANSLATION_ASSISTANT_READY = { version: scriptVersion, extensionId: chrome.runtime.id };
+})();

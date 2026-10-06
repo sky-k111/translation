@@ -7,19 +7,35 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '../..');
 const code = fs.readFileSync(path.join(root, 'extension/background/context-menu.js'), 'utf8');
 
-function setup(sendMessage) {
+function setup(sendMessage, options = {}) {
   let click, startup;
-  const created = [], badges = [], titles = [];
+  let ready = options.ready !== false;
+  let version = options.version || '2.1.5';
+  const created = [], badges = [], titles = [], injections = [];
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json')));
   const context = vm.createContext({
     console: { warn() {} },
     chrome: {
-      runtime: { onStartup: { addListener(handler) { startup = handler; } } },
+      runtime: { getManifest: () => manifest, onStartup: { addListener(handler) { startup = handler; } } },
       contextMenus: {
         removeAll(callback) { created.length = 0; callback(); },
         create(menu, callback) { created.push(menu); callback(); },
         onClicked: { addListener(handler) { click = handler; } }
       },
-      tabs: { sendMessage },
+      tabs: { async sendMessage(tabId, message, target) {
+        if (message.type === 'PING_TRANSLATION') {
+          if (!ready) throw new Error('Receiving end does not exist');
+          return { ready, version };
+        }
+        return sendMessage(tabId, message, target);
+      } },
+      scripting: {
+        async insertCSS(value) { injections.push(value); },
+        async executeScript(value) {
+          if (options.failInjection) throw new Error('Cannot access contents of this page');
+          injections.push(value); ready = true; version = manifest.version;
+        }
+      },
       action: {
         async setBadgeText(value) { badges.push(value); },
         async setTitle(value) { titles.push(value); }
@@ -27,7 +43,7 @@ function setup(sendMessage) {
     }
   });
   vm.runInContext(code, context);
-  return { click, startup, created, badges, titles };
+  return { click, startup, created, badges, titles, injections };
 }
 
 test('creates a native selection-only translation item without duplicates', () => {
@@ -55,9 +71,31 @@ test('routes selected text to its frame and clears a previous failure badge', as
   assert.equal(calls.length, 1);
 });
 
-test('missing page script gives a visible refresh instruction instead of an unhandled error', async () => {
+test('translation failure gives a visible refresh instruction instead of an unhandled error', async () => {
   const state = setup(async () => { throw new Error('Receiving end does not exist'); });
   await state.click({ menuItemId: 'translation-assistant-selection', selectionText: 'Hello' }, { id: 42 });
   assert.equal(state.badges[0].text, '!');
   assert.match(state.titles[0].title, /刷新网页/);
+});
+
+test('already-open pages automatically load current scripts and styles in the selected frame', async () => {
+  let calls = 0;
+  const state = setup(async () => { calls++; return { ok: true }; }, { ready: false });
+  await state.click({ menuItemId: 'translation-assistant-selection', selectionText: 'Hello', frameId: 3 }, { id: 42 });
+  assert.equal(calls, 1);
+  assert.equal(state.injections.length, 2);
+  assert.equal(state.injections[0].target.frameIds[0], 3);
+  assert.ok(state.injections[0].files.includes('extension/content/vocabulary-details.css'));
+  assert.ok(state.injections[1].files.includes('extension/content/content-bundle.js'));
+  assert.equal(state.badges[0].text, '');
+});
+
+test('outdated scripts are refreshed and blocked injection reports the permission error', async () => {
+  const outdated = setup(async () => ({ ok: true }), { version: '2.1.4' });
+  await outdated.click({ menuItemId: 'translation-assistant-selection', selectionText: 'Hello' }, { id: 42 });
+  assert.equal(outdated.injections.length, 2);
+  const blocked = setup(async () => { throw new Error('Must not translate'); }, { ready: false, failInjection: true });
+  await blocked.click({ menuItemId: 'translation-assistant-selection', selectionText: 'Hello' }, { id: 42 });
+  assert.equal(blocked.badges[0].text, '!');
+  assert.match(blocked.titles[0].title, /Cannot access contents/);
 });
