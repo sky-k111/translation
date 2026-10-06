@@ -10,9 +10,9 @@ const code = fs.readFileSync(path.join(root, 'extension/background/context-menu.
 function setup(sendMessage, options = {}) {
   let click, startup;
   let ready = options.ready !== false;
-  let version = options.version || '2.1.5';
   const created = [], badges = [], titles = [], injections = [];
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json')));
+  let version = options.version || manifest.version;
   const context = vm.createContext({
     console: { warn() {} },
     chrome: {

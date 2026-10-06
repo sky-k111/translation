@@ -95,8 +95,12 @@ const root = path.resolve(__dirname, '../..') + path.sep;
     assert.equal(injections, 1);
     assert.equal(await page.locator('.click-tooltip').count(), 1);
     await click({ menuItemId: 'translation-assistant-selection', selectionText: 'take on', frameId: 0 }, { id: 1 });
-    // The legacy popup floats continuously, so click without waiting for animation stability.
-    await page.locator('.tooltip-vocabulary-btn').click({ force: true });
+    const beforeHover = await page.locator('.click-tooltip').boundingBox();
+    await page.locator('.click-tooltip').hover();
+    await page.waitForTimeout(500);
+    const afterHover = await page.locator('.click-tooltip').boundingBox();
+    assert.deepEqual(afterHover, beforeHover, 'Popup must remain still over time and on hover');
+    await page.locator('.tooltip-vocabulary-btn').click();
     await page.waitForFunction(() => document.querySelector('.tooltip-vocabulary-btn').textContent === '收起详解');
     assert.equal(await page.locator('.vocabulary-sense').count(), 2);
     assert.equal(await page.locator('.click-tooltip').count(), 1);

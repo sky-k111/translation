@@ -1,5 +1,5 @@
 (() => {
-const scriptVersion = '2.1.5';
+const scriptVersion = '2.1.6';
 if (window.__TRANSLATION_ASSISTANT_READY?.version === scriptVersion &&
     window.__TRANSLATION_ASSISTANT_READY.extensionId === chrome.runtime.id) return;
 /**

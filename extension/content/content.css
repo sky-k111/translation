@@ -1500,3 +1500,18 @@ trae-highlight.translated-word-highlight:hover {
   background: #f5f5f5;
 }
 
+
+/* Keep translation results and their controls still while reading. */
+.click-tooltip,
+.click-tooltip:hover {
+  animation: none;
+  transform: none;
+  transition: none;
+}
+.click-tooltip button,
+.click-tooltip button:hover,
+.click-tooltip button:active {
+  animation: none;
+  transform: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}

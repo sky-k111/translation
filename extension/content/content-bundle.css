@@ -3688,3 +3688,18 @@ trae-highlight.translated-word-highlight:hover {
 .drawer-frequency-bar.animating {
   animation: barGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Keep translation results and their controls still while reading. */
+.click-tooltip,
+.click-tooltip:hover {
+  animation: none;
+  transform: none;
+  transition: none;
+}
+.click-tooltip button,
+.click-tooltip button:hover,
+.click-tooltip button:active {
+  animation: none;
+  transform: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
