@@ -65,6 +65,29 @@ window.loadSettings = function() {
 /**
  * 保存设置
  */
+window.importAISettings = async function(file) {
+  const data = JSON.parse(await file.text());
+  const ai = data.aiSettings;
+  if (!ai || !['deepseek', 'openai', 'custom'].includes(ai.provider) ||
+      typeof ai.apiKey !== 'string' || !ai.apiKey.trim() ||
+      typeof ai.model !== 'string' || !ai.model.trim() ||
+      typeof ai.apiUrl !== 'string') {
+    throw new Error('配置文件缺少有效的 AI 服务、密钥或模型');
+  }
+  const endpoint = new URL(ai.apiUrl);
+  if (endpoint.protocol !== 'https:') {
+    throw new Error('AI 接口必须使用 HTTPS');
+  }
+  await chrome.storage.local.set({ aiSettings: {
+    enabled: true,
+    provider: ai.provider,
+    apiKey: ai.apiKey.trim(),
+    model: ai.model.trim(),
+    apiUrl: endpoint.href
+  } });
+  window.loadSettings();
+};
+
 window.saveSettings = async function() {
   const backgroundTheme = document.getElementById('backgroundTheme').value;
   const highlightTheme = document.getElementById('highlightTheme').value;

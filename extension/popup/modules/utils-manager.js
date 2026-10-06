@@ -11,7 +11,7 @@ window.AI_CONFIGS = {
   },
   deepseek: {
     apiUrl: 'https://api.deepseek.com/chat/completions',
-    model: 'deepseek-chat'
+    model: 'deepseek-flash'
   },
   custom: {
     apiUrl: '',

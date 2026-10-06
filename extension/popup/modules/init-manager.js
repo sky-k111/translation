@@ -117,6 +117,23 @@ function initEventListeners() {
     saveSettings();
   });
 
+  document.getElementById('importSettingsBtn').addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      try {
+        await window.importAISettings(file);
+        alert('AI 配置已导入并保存');
+      } catch (error) {
+        alert('导入失败：' + error.message);
+      }
+    });
+    input.click();
+  });
+
   // 取消设置按钮点击事件
   document.getElementById('cancelSettingsBtn').addEventListener('click', () => {
     showPage('home');

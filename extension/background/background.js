@@ -7,9 +7,10 @@
  * 3. 与内容脚本(content script)进行消息通信
  * 4. 管理翻译请求和响应
  * 
- * 注意：Service Worker 不支持动态 importScripts()
- * 所有模块必须在 manifest.json 中静态声明或使用 ES6 import
+ * 翻译配置和服务在启动时同步加载，供消息处理器使用。
  */
+
+importScripts('../../config/api-config.js', '../services/ai-translate-service.js');
 
 const startTime = performance.now();
 
@@ -400,7 +401,7 @@ async function smartTranslate(text, context, skipAI = false, useParallel = true)
     try {
       const aiResult = await Promise.race([
         self.translateWithAI(text, context),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 15000))
       ]);
       const latency = Date.now() - startTime;
       
@@ -954,7 +955,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 });
 
 // 监听导航提交事件（用于常规页面加载和 iframe 加载）
-chrome.webNavigation.onCommitted.addListener((details) => {
+chrome.webNavigation?.onCommitted.addListener((details) => {
   if (details && typeof details.tabId === 'number') {
     // 定向发送消息给特定的 frame，避免触发整个页面的所有 frame 重绘
     const options = typeof details.frameId === 'number' ? { frameId: details.frameId } : {};
@@ -966,7 +967,7 @@ chrome.webNavigation.onCommitted.addListener((details) => {
 });
 
 // 监听 History API 更新（用于 SPA 单页应用）
-chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+chrome.webNavigation?.onHistoryStateUpdated.addListener((details) => {
   if (details && typeof details.tabId === 'number') {
     // 定向发送消息给特定的 frame
     const options = typeof details.frameId === 'number' ? { frameId: details.frameId } : {};

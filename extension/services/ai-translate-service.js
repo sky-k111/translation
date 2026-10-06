@@ -52,7 +52,8 @@ async function translateWithAI(text, context) {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userContent }
         ],
-        temperature: settings.temperature
+        temperature: settings.temperature,
+        ...(settings.provider === 'deepseek' ? { thinking: { type: 'disabled' } } : {})
       })
     });
 
@@ -129,7 +130,8 @@ async function detailedTranslate(text, context) {
           { role: 'user', content: userContent }
         ],
         temperature: 0.3,
-        response_format: { type: "json_object" }
+        response_format: { type: "json_object" },
+        ...(settings.provider === 'deepseek' ? { thinking: { type: 'disabled' } } : {})
       })
     });
 
