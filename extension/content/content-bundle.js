@@ -2867,7 +2867,7 @@ class RequestManager {
     this.requestQueue = []; // 请求队列
     this.maxConcurrentRequests = 3; // 最大并发请求数
     this.runningRequests = 0; // 当前运行的请求数
-    this.requestTimeout = 1500; // 减少到1.5秒，快速失败快速回退
+    this.requestTimeout = 20000; // 给后台 AI 翻译留出完整等待时间
     this.stats = {
       totalRequests: 0,
       mergedRequests: 0,
@@ -2895,7 +2895,12 @@ class RequestManager {
       return this.pendingRequests.get(cacheKey);
     }
     
-    // 创建新的请求
+    let resolveRequest, rejectRequest;
+    const promise = new Promise((resolve, reject) => {
+      resolveRequest = resolve;
+      rejectRequest = reject;
+    });
+    // 排队后只发送一次请求，合并请求共享同一个 promise。
     const request = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       text,
@@ -2904,9 +2909,9 @@ class RequestManager {
       priority,
       cacheKey,
       startTime: Date.now(),
-      promise: new Promise((resolve, reject) => {
-        this._executeRequest({ text, context, skipAI }, resolve, reject, cacheKey);
-      })
+      promise,
+      resolve: resolveRequest,
+      reject: rejectRequest
     };
     
     // 存储待处理的请求
@@ -2936,7 +2941,7 @@ class RequestManager {
    */
   async _executeRequest(requestData, resolve, reject, cacheKey) {
     const startTime = Date.now();
-    
+    let timeoutId;
     try {
       // 增加运行的请求数
       this.runningRequests++;
@@ -2949,14 +2954,14 @@ class RequestManager {
           context: requestData.context,
           skipAI: requestData.skipAI
         }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('请求超时')), this.requestTimeout))
+        new Promise((_, reject) => { timeoutId = setTimeout(() => reject(new Error('请求超时，请重试')), this.requestTimeout); })
       ]);
       
       // 处理翻译结果
       if (response && response.ok && response.result && response.result.translation) {
         resolve(response.result);
       } else {
-        reject(new Error('翻译失败'));
+        throw new Error(response?.error || '翻译失败，请检查 AI 设置');
       }
       
       // 更新统计信息
@@ -2968,6 +2973,7 @@ class RequestManager {
       // 更新统计信息
       this.stats.failedRequests++;
     } finally {
+      clearTimeout(timeoutId);
       // 减少运行的请求数
       this.runningRequests--;
       
@@ -2997,18 +3003,12 @@ class RequestManager {
     while (this.runningRequests < this.maxConcurrentRequests && this.requestQueue.length > 0) {
       const request = this.requestQueue.shift();
       
-      // 创建新的 promise 用于处理请求结果
-      const promise = new Promise((resolve, reject) => {
-        this._executeRequest(
-          { text: request.text, context: request.context, skipAI: request.skipAI },
-          resolve,
-          reject,
-          request.cacheKey
-        );
-      });
-      
-      // 更新待处理请求的 promise
-      this.pendingRequests.set(request.cacheKey, promise);
+      this._executeRequest(
+        { text: request.text, context: request.context, skipAI: request.skipAI },
+        request.resolve,
+        request.reject,
+        request.cacheKey
+      );
     }
   }
   
@@ -3960,223 +3960,33 @@ function getContextFromRange(range) {
  */
 async function translateText(text, context = '', skipAI = false) {
   const perfId = safePerformanceMonitor.start('translateText');
-  
-  const cacheKey = text.toLowerCase().trim();
-
-  // 检查翻译缓存，带过期时间
+  const cacheKey = 'auto:zh-CN:' + text.trim() + ':' + context.trim();
   const cached = translationCache.get(cacheKey);
-  if (cached && cached.translation && (Date.now() - cached.timestamp < CACHE_CONFIG.DEFAULT_EXPIRY)) {
-    safePerformanceMonitor.end(perfId, 'translateText', {
-      text: text.slice(0, 50),
-      fromCache: true
-    });
+  if (cached && cached.translation && Date.now() - cached.timestamp < CACHE_CONFIG.DEFAULT_EXPIRY) {
+    safePerformanceMonitor.end(perfId, 'translateText', { fromCache: true });
     return cached;
   }
-
-  let translationResult = {
-    translation: '翻译失败',
-    partOfSpeech: '',
-    phonetic: '',
-    definitions: [],
-    examples: []
-  };
-
-  const rawTranslation = text; // 保存原始文本，作为最后备用
-
-  // 超时处理函数 - 减少超时时间以提高响应速度
-  const timeoutPromise = new Promise((resolve) => {
-    setTimeout(() => {
-      console.warn('翻译请求超时，使用备用翻译结果');
-      resolve({ 
-        translation: text, 
-        partOfSpeech: '', 
-        phonetic: '', 
-        definitions: [], 
-        examples: [] 
-      });
-    }, 2000); // 减少到2秒，快速回退
-  });
-
   try {
-    // 1. 优先尝试使用网易翻译API获取详细翻译信息（重点优化）
-    try {
-      if (window.neteaseTranslateService && window.neteaseTranslateService.hasValidConfig()) {
-        const neteaseResult = await window.neteaseTranslateService.translate(text);
-        // 网易API返回的是完整的翻译结果，包括词性、音标、释义和例句
-        translationResult = neteaseResult;
-        
-        // 验证网易翻译结果的完整性
-        if (!translationResult.translation || translationResult.translation === '翻译失败') {
-          console.warn('网易翻译返回结果不完整，尝试其他翻译服务');
-        } else {
-          // 结合上下文优化词性判断（如果有上下文且获取到了多个释义）
-          if (context && translationResult.definitions && translationResult.definitions.length > 1) {
-            translationResult.partOfSpeech = await optimizePartOfSpeechByContext(translationResult.definitions, context);
-          }
-          
-          // 缓存结果，带有时间戳
-          translationCache.set(cacheKey, {
-            ...translationResult,
-            timestamp: Date.now()
-          });
-          
-          // 结束性能监控
-          safePerformanceMonitor.end(perfId, 'translateText', {
-            text: text.slice(0, 50),
-            fromCache: false,
-            success: translationResult.translation !== '翻译失败'
-          });
-          
-          return translationResult;
-        }
-      } else {
-        if (!window.neteaseTranslateService) {
-           console.warn('网易翻译服务未加载，尝试使用Smart Translate');
-        } else {
-           console.debug('网易翻译未配置，跳过并使用Smart Translate');
-        }
-      }
-    } catch (neteaseErr) {
-      console.error('网易翻译失败，将回退到Smart Translate:', neteaseErr);
-      // 记录错误统计，用于后续优化
-      chrome.runtime.sendMessage({
-        type: 'ERROR_STAT',
-        service: 'netease',
-        error: neteaseErr.message
-      }).catch(() => {}); // 忽略发送错误
+    const response = await requestManager.addRequest(text, context, skipAI, 40);
+    const translation = response?.translation?.trim();
+    if (!translation || (/[A-Za-z]/.test(text) && !/[\u3400-\u9fff]/.test(text) && translation.toLowerCase() === text.trim().toLowerCase())) {
+      throw new Error('翻译服务未返回中文译文，请重试');
     }
-
-    // 2. 尝试使用 Smart Translate (AI -> Youdao)
-    try {
-      // 使用请求管理器处理翻译请求，但设置较低优先级
-      const response = await requestManager.addRequest(text, context, skipAI, 40);
-      
-      if (response && response.translation) {
-        translationResult.translation = response.translation;
-        // 保存词性信息（如果有）
-        if (response.partOfSpeech) {
-          translationResult.partOfSpeech = response.partOfSpeech;
-        }
-        if (response.phonetic) {
-          translationResult.phonetic = response.phonetic;
-        }
-        if (response.definitions) {
-          translationResult.definitions = response.definitions;
-        }
-        if (response.examples) {
-          translationResult.examples = response.examples;
-        }
-        
-        // 结合上下文优化词性判断
-        if (context && response.definitions && response.definitions.length > 1) {
-          translationResult.partOfSpeech = await optimizePartOfSpeechByContext(response.definitions, context);
-        }
-        
-        // 缓存结果，带有时间戳
-        translationCache.set(cacheKey, {
-          ...translationResult,
-          timestamp: Date.now()
-        });
-
-        // 结束性能监控
-        safePerformanceMonitor.end(perfId, 'translateText', {
-          text: text.slice(0, 50),
-          fromCache: false,
-          success: translationResult.translation !== '翻译失败'
-        });
-
-        return translationResult;
-      }
-    } catch (smartErr) {
-      console.error('Smart Translate 失败，将回退到备用方案:', smartErr);
-    }
-    
-    // 3. 回退到 MyMemory（速度快，优先级高）
-    try {
-      const response = await Promise.race([
-        fetch(`${TRANSLATE_API}?q=${encodeURIComponent(text)}&langpair=en|zh-CN`),
-        new Promise((_, r) => setTimeout(() => r(new Error('MyMemory Timeout')), 2000))
-      ]);
-      const data = await response.json();
-      
-      // 检测MyMemory翻译服务使用限制
-      if (data.responseData && data.responseData.translatedText) {
-        const translatedText = data.responseData.translatedText;
-        
-        // 检查是否包含MyMemory警告
-        if (translatedText.includes('MYMEMORY WARNING') || translatedText.includes('YOU USED ALL AVAILABLE FREE TRANSLATIONS')) {
-          // 如果是使用限制警告，尝试使用百度翻译
-          console.warn('MyMemory翻译服务已达到每日使用限制，尝试使用百度翻译');
-          const baiduTranslation = await translateWithBaidu(text);
-          if (baiduTranslation) {
-            translationResult.translation = baiduTranslation;
-          } else {
-            translationResult.translation = rawTranslation || '翻译服务暂时不可用';
-          }
-        } else {
-          translationResult.translation = translatedText;
-        }
-      }
-    } catch (err) {
-      console.error('MyMemory 翻译失败，将回退到百度翻译:', err);
-      
-      // 4. 回退到百度翻译
-      const baiduTranslation = await translateWithBaidu(text);
-      if (baiduTranslation) {
-        translationResult.translation = baiduTranslation;
-      } else {
-        translationResult.translation = rawTranslation || '翻译服务暂时不可用';
-      }
-    }
-    
-    // 5. 尝试获取字典数据以补充词性和音标信息（如果前面没有获取到完整信息）
-    // TODO: 实现 fetchDictionaryData 函数
-    /*
-    try {
-      const dictionaryData = await fetchDictionaryData(text);
-      if (dictionaryData) {
-        if (dictionaryData.partOfSpeech && !translationResult.partOfSpeech) {
-          translationResult.partOfSpeech = dictionaryData.partOfSpeech;
-        }
-        if (dictionaryData.phonetic && !translationResult.phonetic) {
-          translationResult.phonetic = dictionaryData.phonetic;
-        }
-        if (dictionaryData.definitions && !translationResult.definitions.length) {
-          translationResult.definitions = dictionaryData.definitions;
-        }
-        if (dictionaryData.examples && !translationResult.examples.length) {
-          translationResult.examples = dictionaryData.examples;
-        }
-        
-        // 结合上下文优化词性判断（如果有上下文且获取到了多个释义）
-        if (context && dictionaryData.definitions && dictionaryData.definitions.length > 1) {
-          translationResult.partOfSpeech = await optimizePartOfSpeechByContext(dictionaryData.definitions, context);
-        }
-      }
-    } catch (dictErr) {
-      console.warn('字典API请求失败，跳过详细信息获取:', dictErr);
-    }
-    */
+    const result = {
+      ...response,
+      translation,
+      partOfSpeech: response.partOfSpeech || '',
+      phonetic: response.phonetic || '',
+      definitions: response.definitions || [],
+      examples: response.examples || []
+    };
+    translationCache.set(cacheKey, { ...result, timestamp: Date.now() });
+    safePerformanceMonitor.end(perfId, 'translateText', { fromCache: false, success: true });
+    return result;
   } catch (error) {
-    console.error('翻译错误:', error);
-    // 使用备用翻译服务或默认值
-    translationResult.translation = rawTranslation || '翻译服务暂时不可用';
+    safePerformanceMonitor.end(perfId, 'translateText', { fromCache: false, success: false });
+    throw error;
   }
-  
-  // 缓存结果，带有时间戳
-  translationCache.set(cacheKey, {
-    ...translationResult,
-    timestamp: Date.now()
-  });
-
-  // 结束性能监控
-  safePerformanceMonitor.end(perfId, 'translateText', {
-    text: text.slice(0, 50),
-    fromCache: false,
-    success: translationResult.translation !== '翻译失败'
-  });
-
-  return translationResult;
 }
 
 /**
@@ -5209,7 +5019,7 @@ async function showClickTooltip(element, word, translation, count, phonetic, par
   
   // 获取完整的翻译信息，包括definitions和examples
   const context = getContextFromNode(element);
-  const completeTranslation = await translateText(word, context, true);
+  const completeTranslation = await translateText(word, context, false);
   
   // 获取POS分析（如果翻译结果中包含）
   let posAnalysis = completeTranslation.posAnalysis || null;
@@ -5490,7 +5300,7 @@ async function showTranslationPopup(text, translation, rect, count = 1) {
   });
   
   // 触发AI分析（延迟执行）
-  triggerAiAnalysis(text, text, rect);
+  if (isWordPhrase) triggerAiAnalysis(text, text, rect);
 }
 
 
@@ -5573,8 +5383,8 @@ async function executeTranslation() {
   }
   
   try {
-    // 翻译文本（优先主翻译，跳过AI，保证首屏速度）
-    const translationResult = await translateText(text, getContextFromRange(range), true);
+    // 自动识别原文语言，优先使用已配置的 AI 翻译成简体中文。
+    const translationResult = await translateText(text, getContextFromRange(range), false);
     const translation = translationResult.translation || '翻译失败';
     const resultPartOfSpeech = translationResult.partOfSpeech;
     
@@ -5613,8 +5423,8 @@ async function executeTranslation() {
     await showTranslationPopup(text, translation, rect, count);
   } catch (error) {
     console.error('执行翻译失败:', error);
-    // 发生错误时也要隐藏加载动画
     hideLoadingIndicator();
+    await renderPopup({ text, translation: '翻译失败：' + error.message, rect, count: 0 });
   }
   
   // 清除选择
