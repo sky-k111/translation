@@ -1345,7 +1345,7 @@ function getContextFromRange(range) {
  */
 async function translateText(text, context = '', skipAI = false) {
   const perfId = safePerformanceMonitor.start('translateText');
-  const cacheKey = 'auto:zh-CN:' + text.trim() + ':' + context.trim();
+  const cacheKey = 'auto:zh-en:v2:' + text.trim() + ':' + context.trim();
   const cached = translationCache.get(cacheKey);
   if (cached && cached.translation && Date.now() - cached.timestamp < CACHE_CONFIG.DEFAULT_EXPIRY) {
     safePerformanceMonitor.end(perfId, 'translateText', { fromCache: true });
@@ -1354,8 +1354,8 @@ async function translateText(text, context = '', skipAI = false) {
   try {
     const response = await requestManager.addRequest(text, context, skipAI, 40);
     const translation = response?.translation?.trim();
-    if (!translation || (/[A-Za-z]/.test(text) && !/[\u3400-\u9fff]/.test(text) && translation.toLowerCase() === text.trim().toLowerCase())) {
-      throw new Error('翻译服务未返回中文译文，请重试');
+    if (!translation || (/\p{L}/u.test(text) && translation.toLowerCase() === text.trim().toLowerCase())) {
+      throw new Error('翻译服务未返回有效译文，请重试');
     }
     const result = {
       ...response,
@@ -2767,7 +2767,7 @@ async function executeTranslation() {
   }
   
   try {
-    // 自动识别原文语言，优先使用已配置的 AI 翻译成简体中文。
+    // 自动选择方向：中文译成英文，其他语言译成简体中文。
     const translationResult = await translateText(text, getContextFromRange(range), false);
     const translation = translationResult.translation || '翻译失败';
     const resultPartOfSpeech = translationResult.partOfSpeech;

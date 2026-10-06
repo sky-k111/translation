@@ -281,7 +281,7 @@ async function translateWithYoudao(text) {
   const url = self.YOUDAO_API_URL;
   const q = text;                    // 查询文本
   const from = 'auto';               // 源语言自动检测
-  const to = 'zh-CHS';               // 目标语言：简体中文
+  const to = 'zh-CHS';               // 非中文默认翻译成简体中文
   const salt = Date.now().toString(); // 随机盐值，防止重放攻击
   const curtime = Math.floor(Date.now() / 1000).toString(); // 当前时间戳
 
@@ -298,6 +298,7 @@ async function translateWithYoudao(text) {
     salt,                 // 盐值
     sign,                 // 签名
     signType: 'v3',       // 签名类型
+    strict: 'false',      // 允许有道自动中译英、英译中
     curtime               // 时间戳
   });
 

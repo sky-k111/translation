@@ -5,8 +5,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '../..');
-const source = fs.readFileSync(path.join(root, 'extension/content/content.js'), 'utf8');
-const bundle = fs.readFileSync(path.join(root, 'extension/content/content-bundle.js'), 'utf8');
+const source = fs.readFileSync(path.join(root, 'extension/content/content.js'), 'utf8').replace(/\r\n/g, '\n');
+const bundle = fs.readFileSync(path.join(root, 'extension/content/content-bundle.js'), 'utf8').replace(/\r\n/g, '\n');
 const managerCode = source.slice(source.indexOf('class RequestManager {'), source.indexOf('// 全局请求管理器实例'));
 const translateCode = source.slice(source.indexOf('async function translateText('), source.indexOf('/**\n * 批量翻译文本'));
 const executeCode = source.slice(source.indexOf('async function executeTranslation()'), source.indexOf('// 监听鼠标抬起事件'));
@@ -57,9 +57,27 @@ test('old original-text cache is ignored and unchanged English responses are rej
     return { ok: true, result: { translation: 'Hello' } };
   });
   cache.set('hello', { translation: 'Hello', timestamp: Date.now() });
-  await assert.rejects(vm.runInContext("translateText('Hello')", context), /未返回中文/);
+  await assert.rejects(vm.runInContext("translateText('Hello')", context), /未返回有效译文/);
   assert.equal(requests, 1);
   assert.equal(cache.size, 1);
+});
+
+test('Chinese translation uses a fresh direction cache and rejects unchanged Chinese', async () => {
+  let requests = 0;
+  const { context, cache } = setup(async () => {
+    requests++;
+    return { ok: true, result: { translation: 'I am preparing for the CET-6 exam.' } };
+  });
+  cache.set('auto:zh-CN:我正在准备六级考试:', {
+    translation: '我正在准备六级考试', timestamp: Date.now()
+  });
+  const translated = await vm.runInContext("translateText('我正在准备六级考试')", context);
+  assert.equal(translated.translation, 'I am preparing for the CET-6 exam.');
+  await vm.runInContext("translateText('我正在准备六级考试')", context);
+  assert.equal(requests, 1);
+
+  context.chrome.runtime.sendMessage = async () => ({ ok: true, result: { translation: '你好' } });
+  await assert.rejects(vm.runInContext("translateText('你好')", context), /未返回有效译文/);
 });
 
 test('selection invokes AI and saves only a successful translation', async () => {
