@@ -10,7 +10,7 @@
  * 翻译配置和服务在启动时同步加载，供消息处理器使用。
  */
 
-importScripts('../../config/api-config.js', '../services/ai-translate-service.js');
+importScripts('../../config/api-config.js', '../services/ai-translate-service.js', 'context-menu.js');
 
 const startTime = performance.now();
 
@@ -133,6 +133,7 @@ setTimeout(() => {
 // 监听扩展安装事件 - 当用户首次安装或更新扩展时触发
 chrome.runtime.onInstalled.addListener(() => {
   console.log('单词翻译助手已安装');
+  registerTranslationContextMenu();
   
   // 清理无效的 detailedInfo 数据
   cleanInvalidDetailedInfo();

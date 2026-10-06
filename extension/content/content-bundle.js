@@ -5350,7 +5350,7 @@ function handleTextSelection() {
 }
 
 // 执行翻译（按回车键或空格键后调用，兼容旧逻辑）
-async function executeTranslation() {
+async function executeTranslation(requestedText = '') {
   // 检查当前域名是否允许运行插件
   if (!isDomainAllowed()) {
     return;
@@ -5360,16 +5360,23 @@ async function executeTranslation() {
   const selection = window.getSelection();
   let text, range, rect;
   
-  if (selection.toString().trim().length > 0) {
+  const currentText = selection.toString().trim();
+  const menuText = requestedText.trim();
+  if (currentText && (!menuText || currentText === menuText)) {
     // 使用当前选择
     text = selection.toString().trim();
     range = selection.getRangeAt(0);
     rect = range.getBoundingClientRect();
-  } else if (selectedText && selectedRange) {
+  } else if (selectedText && selectedRange && (!menuText || selectedText === menuText)) {
     // 使用保存的选择
     text = selectedText;
     range = selectedRange;
     rect = range.getBoundingClientRect();
+  } else if (menuText) {
+    // Native menus supply the text even if the page has cleared the selection.
+    text = menuText;
+    range = null;
+    rect = { left: Math.max(16, window.innerWidth / 2 - 200), top: 100, width: 0, height: 0 };
   } else {
     return;
   }
@@ -5384,7 +5391,7 @@ async function executeTranslation() {
   
   try {
     // 自动选择方向：中文译成英文，其他语言译成简体中文。
-    const translationResult = await translateText(text, getContextFromRange(range), false);
+    const translationResult = await translateText(text, range ? getContextFromRange(range) : '', false);
     const translation = translationResult.translation || '翻译失败';
     const resultPartOfSpeech = translationResult.partOfSpeech;
     
@@ -5500,30 +5507,10 @@ const keydownListenerId = eventDelegateManager.addEventListener('keydown', async
   }
 });
 
-// 监听右键菜单事件（右键触发翻译）
-const contextmenuListenerId = eventDelegateManager.addEventListener('contextmenu', async (e) => {
-  // 检查当前域名是否允许运行插件
-  if (!isDomainAllowed()) {
-    return;
-  }
-  
-  // 检查是否有输入框或文本区域处于焦点状态
-  const activeElement = document.activeElement;
-  const isInputFocused = activeElement && (
-    activeElement.tagName === 'INPUT' ||
-    activeElement.tagName === 'TEXTAREA' ||
-    activeElement.isContentEditable
-  );
-  
-  // 如果不在输入框内，且有选中文本，则阻止默认菜单并触发翻译
-  if (!isInputFocused) {
-    const selection = window.getSelection();
-    // 只有当确实有选中文本时才拦截右键
-    if (selection.toString().trim().length > 0 || (selectedText && selectedRange)) {
-      handleSelectionTranslation(e);
-    }
-  }
-});
+// Preserve the browser menu and remember the range for the native translation item.
+const contextmenuListenerId = eventDelegateManager.addEventListener('contextmenu', () => {
+  handleTextSelection();
+}, { capture: true });
 
 /**
  * 处理选区翻译逻辑（供键盘和右键事件复用）
@@ -5700,7 +5687,16 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === 'TRANSLATE_SELECTION' && sender.id === chrome.runtime.id) {
+    if (!isDomainAllowed() || typeof msg.text !== 'string' || !msg.text.trim()) {
+      sendResponse({ ok: false });
+      return;
+    }
+    sendResponse({ ok: true });
+    executeTranslation(msg.text).catch(error => console.error('Selection translation failed:', error));
+    return;
+  }
   if (msg && msg.type === 'REHIGHLIGHT') {
     chrome.storage.local.get(['translatedWords']).then(result => {
       const words = result.translatedWords || {};

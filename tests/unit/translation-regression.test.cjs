@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(root, 'extension/content/content.js'), 
 const bundle = fs.readFileSync(path.join(root, 'extension/content/content-bundle.js'), 'utf8').replace(/\r\n/g, '\n');
 const managerCode = source.slice(source.indexOf('class RequestManager {'), source.indexOf('// 全局请求管理器实例'));
 const translateCode = source.slice(source.indexOf('async function translateText('), source.indexOf('/**\n * 批量翻译文本'));
-const executeCode = source.slice(source.indexOf('async function executeTranslation()'), source.indexOf('// 监听鼠标抬起事件'));
+const executeCode = source.slice(source.indexOf('async function executeTranslation('), source.indexOf('// 监听鼠标抬起事件'));
 
 function setup(sendMessage) {
   const cache = new Map();
@@ -109,4 +109,27 @@ test('selection invokes AI and saves only a successful translation', async () =>
   await vm.runInContext('executeTranslation()', context);
   assert.equal(saved.length, 1);
   assert.match(shown[1].translation, /网络请求失败/);
+});
+
+test('native menu translates its supplied text even after the page clears the selection', async () => {
+  const shown = [];
+  const { context } = setup(async message => {
+    assert.equal(message.text, '你好');
+    assert.equal(message.context, '');
+    assert.equal(message.skipAI, false);
+    return { ok: true, result: { translation: 'Hello' } };
+  });
+  Object.assign(context, {
+    window: { innerWidth: 1200, getSelection: () => ({ toString: () => '', removeAllRanges() {} }) },
+    isDomainAllowed: () => true, isExtensionContextValid: () => true,
+    showLoadingIndicator() {}, hideLoadingIndicator() {},
+    getContextFromRange: () => { throw new Error('No range available'); },
+    isWordOrPhrase: () => false, selectedText: 'Old unrelated text', selectedRange: {},
+    saveTranslation: async () => {}, showTranslationPopup: async (...args) => shown.push(args)
+  });
+  context.chrome.storage = { local: { get: async () => ({ translatedWords: {} }) } };
+  vm.runInContext(executeCode, context);
+  await vm.runInContext("executeTranslation('你好')", context);
+  assert.equal(shown[0][0], '你好');
+  assert.equal(shown[0][1], 'Hello');
 });
