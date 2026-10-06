@@ -1,0 +1,68 @@
+/* Opaque monochrome theme for in-page translation results. */
+.click-tooltip,
+.click-tooltip:hover {
+  color-scheme: light;
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid #d4d4d4 !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .18) !important;
+  backdrop-filter: none !important;
+}
+.click-tooltip *,
+.click-tooltip *::before,
+.click-tooltip *::after {
+  color: #111 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+.click-tooltip .tooltip-word,
+.click-tooltip .tooltip-part-of-speech,
+.click-tooltip .tooltip-part-of-speech-main,
+.click-tooltip .tooltip-primary-sense-pos {
+  background: #f3f3f3 !important;
+  border-color: #d4d4d4 !important;
+  box-shadow: none !important;
+}
+.click-tooltip .tooltip-translation { line-height: 1.65; }
+.click-tooltip .tooltip-function-buttons,
+.click-tooltip .tooltip-primary-definition,
+.click-tooltip .tooltip-primary-sense {
+  background: #fafafa !important;
+  border-color: #dedede !important;
+  box-shadow: none !important;
+}
+.click-tooltip button {
+  background: #f5f5f5 !important;
+  color: #111 !important;
+  border: 1px solid #d4d4d4 !important;
+  box-shadow: none !important;
+}
+.click-tooltip button:hover { background: #e9e9e9 !important; }
+.click-tooltip button:active { background: #dedede !important; }
+.click-tooltip button:focus-visible { outline: 2px solid #111 !important; outline-offset: 3px; }
+.click-tooltip button:disabled { color: #555 !important; cursor: wait; }
+.click-tooltip .star-btn.starred svg { fill: #111; }
+.click-tooltip .tooltip-count,
+.click-tooltip .tooltip-actions,
+.click-tooltip .tooltip-vocabulary-panel { border-color: #dedede !important; }
+.click-tooltip .vocabulary-context,
+.click-tooltip .vocabulary-note,
+.click-tooltip .vocabulary-phrase {
+  background: #f5f5f5 !important;
+  border: 1px solid #e3e3e3;
+}
+.click-tooltip .vocabulary-example { border-color: #aaa !important; }
+.click-tooltip .vocabulary-usage,
+.click-tooltip .vocabulary-example,
+.click-tooltip .vocabulary-example-translation { font-size: 14px; }
+.click-tooltip .vocabulary-source { font-size: 12px; }
+.click-tooltip .vocabulary-error { font-size: 13px; }
+.click-tooltip,
+.click-tooltip .tooltip-meanings { scrollbar-color: #888 #f5f5f5; }
+.click-tooltip::-webkit-scrollbar-track,
+.click-tooltip .tooltip-meanings::-webkit-scrollbar-track { background: #f5f5f5; }
+.click-tooltip::-webkit-scrollbar-thumb,
+.click-tooltip .tooltip-meanings::-webkit-scrollbar-thumb { background: #aaa; }
+.click-tooltip::-webkit-scrollbar-thumb:hover,
+.click-tooltip .tooltip-meanings::-webkit-scrollbar-thumb:hover { background: #777; }

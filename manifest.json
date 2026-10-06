@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "单词翻译助手",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "高性能翻译助手 - 优化版",
   
   "minimum_chrome_version": "88",
@@ -32,7 +32,8 @@
       ],
       "css": [
         "extension/content/content-bundle.css",
-        "extension/content/vocabulary-details.css"
+        "extension/content/vocabulary-details.css",
+        "extension/content/translation-popup-theme.css"
       ],
       "run_at": "document_idle",
       "all_frames": true,
