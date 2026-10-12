@@ -4,7 +4,7 @@
 
 **一个优雅的Chrome浏览器扩展，为英语学习者提供强大的划词翻译和单词管理功能**
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.1.8-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Chrome](https://img.shields.io/badge/Chrome-88+-yellow.svg)
 
@@ -92,8 +92,8 @@
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/Timcai06/TIMS-project.git
-   cd TIMS-project
+   git clone https://github.com/sky-k111/translation.git
+   cd translation
    ```
 
 2. **打开扩展管理页面**
@@ -112,17 +112,20 @@
 
 ### 方法一：从源码安装（开发者模式）
 
-1. 下载或克隆此项目到本地
+1. 从 [sky-k111/translation](https://github.com/sky-k111/translation) 下载或克隆此项目到本地
 2. 打开Chrome浏览器，在地址栏输入 `chrome://extensions/`
 3. 开启右上角的"开发者模式"
 4. 点击"加载已解压的扩展程序"
 5. 选择包含 `manifest.json` 的项目文件夹
 
-### 方法二：打包安装
+### 方法二：下载 ZIP 安装（无需 Git）
 
-1. 在扩展管理页面点击"打包扩展程序"
-2. 选择项目根目录，点击"打包扩展程序"
-3. 使用生成的 `.crx` 文件安装
+1. 下载本仓库的 [源码 ZIP](https://github.com/sky-k111/translation/archive/refs/heads/main.zip)，或在仓库页面点击 **Code → Download ZIP**
+2. 解压文件，找到包含 `manifest.json` 的 `translation-main` 文件夹
+3. 打开 `chrome://extensions/`，开启"开发者模式"
+4. 点击"加载已解压的扩展程序"，选择上述文件夹
+
+> 安装扩展无需运行 `npm install` 或构建命令；开发命令见下方"开发与定制"。
 
 ---
 
@@ -158,7 +161,7 @@
 ## 📁 项目结构
 
 ```
-TIMS-project/
+translation/
 ├── manifest.json                  # Chrome扩展配置 (Manifest V3)
 ├── package.json                   # Node.js依赖配置
 ├── tsconfig.json                  # TypeScript配置
@@ -303,10 +306,10 @@ npm run type-check
 npm run build
 
 # 运行测试（监听模式）
-npm test:watch
+npm run test:watch
 
 # 生成覆盖率报告
-npm test:coverage
+npm run test:coverage
 ```
 
 ### CSS样式定制
@@ -390,7 +393,7 @@ npm test:coverage
 
 ## 🤝 贡献指南
 
-欢迎提交Issue和Pull Request来改进这个项目！
+欢迎向 [sky-k111/translation](https://github.com/sky-k111/translation) 提交 [Issue](https://github.com/sky-k111/translation/issues) 和 [Pull Request](https://github.com/sky-k111/translation/pulls) 来改进这个项目！
 
 ### 贡献步骤
 
@@ -419,8 +422,8 @@ npm test:coverage
 
 ### 遇到问题？
 
-1. 查看 [Issues](https://github.com/Timcai06/TIMS-project/issues) 页面是否已有相关问题
-2. 创建新的Issue描述您的问题
+1. 查看 [Issues](https://github.com/sky-k111/translation/issues) 页面是否已有相关问题
+2. [创建新的 Issue](https://github.com/sky-k111/translation/issues/new) 描述您的问题
 3. 提供详细的错误信息和复现步骤
 
 ### 有建议？
@@ -434,6 +437,6 @@ npm test:coverage
 
 **享受英语学习的乐趣！📚✨**
 
-Made with ❤️ by [Timcai06](https://github.com/Timcai06)
+由 [Ethan Chen（陈奕恺）](https://github.com/sky-k111) 维护 · [项目仓库](https://github.com/sky-k111/translation)
 
 </div>
