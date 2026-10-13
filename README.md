@@ -14,7 +14,9 @@
 
 ## 项目来源与升级
 
-本项目由 **Ethan Chen（陈奕恺）** 在 [Timcai06/google-trans-extantion](https://github.com/Timcai06/google-trans-extantion) 原项目基础上升级并维护。感谢原作者 [Timcai06](https://github.com/Timcai06) 提供的划词翻译与单词管理基础。
+**原项目是 [Timcai06/google-trans-extantion](https://github.com/Timcai06/google-trans-extantion)，作者为 [Timcai06](https://github.com/Timcai06)。** 划词翻译与单词管理等基础功能来自该原项目。
+
+本仓库是原项目的派生升级版本，由 **Ethan Chen（陈奕恺）** 在原项目基础上升级并维护，以下升级内容对应本仓库的后续开发。
 
 - **原项目 Fork**：[sky-k111/google-trans-extantion](https://github.com/sky-k111/google-trans-extantion)。
 - **当前升级版本**：[sky-k111/translation](https://github.com/sky-k111/translation)。本 README 的安装、下载与反馈入口均对应此升级仓库。
