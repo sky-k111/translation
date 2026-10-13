@@ -8,9 +8,23 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Chrome](https://img.shields.io/badge/Chrome-88+-yellow.svg)
 
-[快速开始](#-快速开始) • [功能特性](#-功能特性) • [安装方法](#-安装方法) • [使用指南](#-使用指南) • [技术栈](#-技术栈) • [贡献指南](#-贡献指南)
+[项目来源与升级](#项目来源与升级) • [快速开始](#-快速开始) • [功能特性](#-功能特性) • [安装方法](#-安装方法) • [使用指南](#-使用指南) • [技术栈](#-技术栈) • [贡献指南](#-贡献指南)
 
 </div>
+
+## 项目来源与升级
+
+本项目由 **Ethan Chen（陈奕恺）** 在 [Timcai06/google-trans-extantion](https://github.com/Timcai06/google-trans-extantion) 原项目基础上升级并维护。感谢原作者 [Timcai06](https://github.com/Timcai06) 提供的划词翻译与单词管理基础。
+
+- **原项目 Fork**：[sky-k111/google-trans-extantion](https://github.com/sky-k111/google-trans-extantion)。
+- **当前升级版本**：[sky-k111/translation](https://github.com/sky-k111/translation)。本 README 的安装、下载与反馈入口均对应此升级仓库。
+
+本仓库已完成的主要升级包括：
+
+- **AI 翻译与语言方向识别**：划词翻译接入 AI，支持中文译英文、其他语言译中文，并支持导入本地 AI 配置。
+- **原生右键翻译**：新增浏览器选区翻译菜单，支持页面连接断开后的恢复处理。
+- **按需词汇详解**：在翻译弹窗中展开词性、多义项、短语与双语例句，补充单词和简单词组的 IPA 音标。
+- **翻译弹窗交互**：采用不透明黑白样式，保持弹窗位置稳定，改善阅读和操作体验。
 
 ---
 
@@ -19,6 +33,7 @@
 <details open>
 <summary><b>点击展开/收起目录</b></summary>
 
+- [项目来源与升级](#项目来源与升级)
 - [✨ 功能特性](#-功能特性)
 - [🚀 快速开始](#-快速开始)
 - [📦 安装方法](#-安装方法)
@@ -437,6 +452,6 @@ npm run test:coverage
 
 **享受英语学习的乐趣！📚✨**
 
-由 [Ethan Chen（陈奕恺）](https://github.com/sky-k111) 维护 · [项目仓库](https://github.com/sky-k111/translation)
+原项目作者：[Timcai06](https://github.com/Timcai06) · 升级与维护：[Ethan Chen（陈奕恺）](https://github.com/sky-k111) · [项目仓库](https://github.com/sky-k111/translation)
 
 </div>
